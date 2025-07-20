@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Application Form</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <div class="application-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="university-logo">
+                <img src="./assets/lsrc.jpg" alt="College Logo" />
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="form-section">
+                <div class="form-title-container">
+                    <h2 class="form-title">APPLICATION FORM</h2>
+                </div>
+
+                <form id="applicationForm" class="application-form" action="submit_non_teaching.php" method="POST" enctype="multipart/form-data">
+                    <!-- Post Applied For -->
+                    <div class="form-group-container">
+                        <div class="section-header">Post Applied For</div>
+                        <div class="form-content">
+                            <div class="form-row">
+                                <div class="form-field">
+                                    <label for="postApplied">Post Applied For<span class="required">*</span></label>
+                                    <select id="postApplied" name="post_applied_for" required>
+                                        <option value="">Select Post Applied For</option>
+                                        <option value="junior-clerk">Junior Clerk</option>
+                                        <option value="junior-accountant">Junior Accountant</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                                <div class="form-field" id="otherPostField" style="display: none">
+                                    <label for="otherPostInput">Other Type<span class="required">*</span></label>
+                                    <input type="text" id="otherPostInput" name="other_post_type" placeholder="Enter other post">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Personal Information -->
+                    <div class="form-group-container">
+                        <div class="section-header">Personal Information</div>
+                        <div class="form-content">
+                            <div class="form-row">
+                                <div class="form-field">
+                                    <label>First Name<span class="required">*</span></label>
+                                    <input type="text" id="firstName" name="first_name" placeholder="First Name" required>
+                                </div>
+                                <div class="form-field">
+                                    <label>Middle Name</label>
+                                    <input type="text" id="middleName" name="middle_name" placeholder="Middle Name">
+                                </div>
+                                <div class="form-field">
+                                    <label>Last Name<span class="required">*</span></label>
+                                    <input type="text" id="lastName" name="last_name" placeholder="Last Name" required>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-field">
+                                    <label>Email<span class="required">*</span></label>
+                                    <input type="email" id="email" name="email" placeholder="Email" required>
+                                </div>
+                                <div class="form-field">
+                                    <label>Mobile Number<span class="required">*</span></label>
+                                    <input type="tel" id="mobile" name="mobile" placeholder="Mobile Number" required>
+                                </div>
+                                <div class="form-field">
+                                    <label>Address<span class="required">*</span></label>
+                                    <input type="text" id="address" name="address" placeholder="Address" required>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-field">
+                                    <label>Date of Birth<span class="required">*</span></label>
+                                    <input type="date" id="dob" name="dob" required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Qualification Information -->
+                    <div class="form-group-container">
+                        <div class="section-header">Qualification Information</div>
+                        <div class="form-content">
+                            <div id="qualificationsList">
+                                <!-- Initial qualification field -->
+                                <div class="qualification-entry">
+                                    <div class="form-row">
+                                        <div class="form-field">
+                                            <label>Degree<span class="required">*</span></label>
+                                            <input type="text" name="degree[]" placeholder="Degree" required>
+                                        </div>
+                                        <div class="form-field">
+                                            <label>University<span class="required">*</span></label>
+                                            <input type="text" name="university[]" placeholder="University" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-field">
+                                            <label>Year<span class="required">*</span></label>
+                                            <input type="text" name="year[]" placeholder="Year" required>
+                                        </div>
+                                        <div class="form-field">
+                                            <label>Percentage<span class="required">*</span></label>
+                                            <input type="text" name="percentage[]" placeholder="Percentage" required>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="button" class="add-qualification-btn" onclick="addQualification()">
+                                Add Qualification
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Work Experience Information -->
+                    <div class="form-group-container">
+                        <div class="section-header">Work Experience Information</div>
+                        <div class="form-content">
+                            <div class="experience-toggle">
+                                <div class="radio-group">
+                                    <label class="radio-label">
+                                        <input type="radio" name="experienceType" value="fresher" onchange="toggleExperienceType()">
+                                        <span class="radio-custom"></span>
+                                        Fresher
+                                    </label>
+                                    <label class="radio-label">
+                                        <input type="radio" name="experienceType" value="experienced" checked onchange="toggleExperienceType()">
+                                        <span class="radio-custom"></span>
+                                        Experienced
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div id="experienceSection">
+                                <div id="experiencesList">
+                                    <!-- Initial experience field -->
+                                    <div class="experience-entry">
+                                        <div class="form-row">
+                                            <div class="form-field">
+                                                <label>Organization</label>
+                                                <input type="text" name="organization[]" placeholder="Organization">
+                                            </div>
+                                            <div class="form-field">
+                                                <label>Designation</label>
+                                                <input type="text" name="designation[]" placeholder="Designation">
+                                            </div>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="form-field">
+                                                <label>From Date</label>
+                                                <input type="date" name="from_date[]">
+                                            </div>
+                                            <div class="form-field">
+                                                <label>To Date</label>
+                                                <input type="date" name="to_date[]">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="button" class="add-experience-btn" onclick="addWorkExperience()">
+                                    Add Work Experience
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Additional Information -->
+                    <div class="form-group-container">
+                        <div class="section-header">Additional Information</div>
+                        <div class="form-content">
+                            <div class="form-row">
+                                <div class="form-field">
+                                    <label>Mother Tongue</label>
+                                    <input type="text" id="motherTongue" name="mother_tongue" placeholder="Mother Tongue">
+                                </div>
+                                <div class="form-field">
+                                    <label>Other Language</label>
+                                    <input type="text" id="otherLanguage" name="other_language" placeholder="Other Language">
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-field">
+                                    <label>English Typing Speed Per Minute</label>
+                                    <input type="number" id="englishTypingSpeed" name="english_typing" placeholder="40" min="0">
+                                </div>
+                                <div class="form-field">
+                                    <label>Marathi Typing Speed Per Minute</label>
+                                    <input type="number" id="marathiTypingSpeed" name="marathi_typing" placeholder="40" min="0">
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-field">
+                                    <label>Joining Date If Selected:</label>
+                                    <input type="date" id="joiningDate" name="joining_date">
+                                </div>
+                                <div class="form-field">
+                                    <label>Expected Salary</label>
+                                    <input type="text" id="expectedSalary" name="expected_salary" placeholder="Expected Salary">
+                                </div>
+                                <div class="form-field">
+                                    <label>Current Salary</label>
+                                    <input type="text" id="currentSalary" name="current_salary" placeholder="Current Salary">
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-field full-width">
+                                    <label>Comments</label>
+                                    <textarea id="comments" name="comments" placeholder="Additional Comments" rows="4"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Upload CV -->
+                    <div class="form-group-container">
+                        <div class="section-header">Upload CV</div>
+                        <div class="form-content resume-section">
+                            <div class="file-upload-container">
+                                <input type="file" id="cvUpload" name="cv" accept=".pdf" onchange="handleFileUpload(this)">
+                                <label for="cvUpload" class="upload-container">
+                                    <div class="upload-icon">📄</div>
+                                    <span class="upload-text" id="uploadText">Choose a file</span>
+                                </label>
+                                <button type="button" class="browse-btn" onclick="document.getElementById('cvUpload').click()">
+                                    Browse
+                                </button>
+                            </div>
+                            <p class="upload-note">
+                                *Upload CV - Maximum File Size is 5MB (PDF ONLY)
+                            </p>
+                            <p id="fileError" class="error-message" style="display: none"></p>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="submit-section">
+                        <button type="submit" class="submit-btn">Submit</button>
+                    </div>
+
+                    <!-- Excel Export Button -->
+                    <button type="button" onclick="exportNonTeachingToExcel()" class="export-btn">
+                      Download Excel Report
+                  </button>
+                  
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Add Qualification
+        function addQualification() {
+            const container = document.getElementById('qualificationsList');
+            const newEntry = document.createElement('div');
+            newEntry.className = 'qualification-entry';
+            newEntry.innerHTML = `
+                <div class="form-row">
+                    <div class="form-field">
+                        <label>Degree<span class="required">*</span></label>
+                        <input type="text" name="degree[]" placeholder="Degree" required>
+                    </div>
+                    <div class="form-field">
+                        <label>University<span class="required">*</span></label>
+                        <input type="text" name="university[]" placeholder="University" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-field">
+                        <label>Year<span class="required">*</span></label>
+                        <input type="text" name="year[]" placeholder="Year" required>
+                    </div>
+                    <div class="form-field">
+                        <label>Percentage<span class="required">*</span></label>
+                        <input type="text" name="percentage[]" placeholder="Percentage" required>
+                    </div>
+                </div>
+            `;
+            container.appendChild(newEntry);
+        }
+
+        // Add Work Experience
+        function addWorkExperience() {
+            const container = document.getElementById('experiencesList');
+            const newEntry = document.createElement('div');
+            newEntry.className = 'experience-entry';
+            newEntry.innerHTML = `
+                <div class="form-row">
+                    <div class="form-field">
+                        <label>Organization</label>
+                        <input type="text" name="organization[]" placeholder="Organization">
+                    </div>
+                    <div class="form-field">
+                        <label>Designation</label>
+                        <input type="text" name="designation[]" placeholder="Designation">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-field">
+                        <label>From Date</label>
+                        <input type="date" name="from_date[]">
+                    </div>
+                    <div class="form-field">
+                        <label>To Date</label>
+                        <input type="date" name="to_date[]">
+                    </div>
+                </div>
+            `;
+            container.appendChild(newEntry);
+        }
+
+        // Toggle Experience Type
+        function toggleExperienceType() {
+            const experienceType = document.querySelector('input[name="experienceType"]:checked').value;
+            const experienceSection = document.getElementById('experienceSection');
+            
+            if (experienceType === 'fresher') {
+                experienceSection.style.display = 'none';
+                // Clear existing experience fields
+                document.getElementById('experiencesList').innerHTML = '';
+            } else {
+                experienceSection.style.display = 'block';
+                // Add one experience field if none exists
+                if (document.querySelectorAll('.experience-entry').length === 0) {
+                    addWorkExperience();
+                }
+            }
+        }
+
+        // Handle File Upload
+        function handleFileUpload(input) {
+            const file = input.files[0];
+            const uploadText = document.getElementById('uploadText');
+            const fileError = document.getElementById('fileError');
+            
+            if (file) {
+                // Check file type
+                if (file.type !== 'application/pdf') {
+                    fileError.textContent = 'Only PDF files are allowed';
+                    fileError.style.display = 'block';
+                    input.value = '';
+                    return;
+                }
+                
+                // Check file size (5MB max)
+                if (file.size > 5 * 1024 * 1024) {
+                    fileError.textContent = 'File size exceeds 5MB limit';
+                    fileError.style.display = 'block';
+                    input.value = '';
+                    return;
+                }
+                
+                uploadText.textContent = file.name;
+                fileError.style.display = 'none';
+            }
+        }
+
+        // Show/hide other post field
+        document.getElementById('postApplied').addEventListener('change', function() {
+            const otherPostField = document.getElementById('otherPostField');
+            otherPostField.style.display = this.value === 'other' ? 'block' : 'none';
+        });
+    </script>
+    <script>
+      function exportNonTeachingToExcel() {
+          // Create a temporary form
+          const tempForm = document.createElement('form');
+          tempForm.method = 'POST';
+          tempForm.action = 'export_non_teaching.php';
+          tempForm.target = '_blank'; // Open in new tab
+          
+          // Add any required parameters
+          const input = document.createElement('input');
+          input.type = 'hidden';
+          input.name = 'export_data';
+          input.value = '1';
+          tempForm.appendChild(input);
+          
+          // Submit the form
+          document.body.appendChild(tempForm);
+          tempForm.submit();
+          document.body.removeChild(tempForm);
+      }
+      </script>
+</body>
+</html>
