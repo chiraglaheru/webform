@@ -7,7 +7,7 @@ $applicationId = $_GET['id'] ?? 0;
 if (!$applicationId) die("No application ID.");
 
 
-$conn = new mysqli("localhost", "root", "root", "form_data", 8889);
+$conn = new mysqli("localhost", "root", "1234", "form_data", 8889);
 if ($conn->connect_error) die("DB connection failed: " . $conn->connect_error);
 
 // Get main application

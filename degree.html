@@ -50,7 +50,7 @@
           </div>
 
         <!-- Ensure your form has these attributes -->
-<form id="applicationForm" method="POST" action="process_degree.php" enctype="multipart/form-data">
+<form id="applicationForm" method="POST" action="submit.degree.php" enctype="multipart/form-data">
             <!-- Post Applied For -->
             <div class="form-group-container">
               <div class="section-header">Post Applied For</div>
@@ -288,38 +288,37 @@
                 </div>
 
                 <div class="add-qualification-section">
-                  <button type="button" class="add-experience-btn">+ Add Work Experience</button>
+                  <button type="button" class="add-qualification-btn" onclick="addQualification()">+ Add Qualification</button>
                 </div>
               </div>
             </div>
 
-           <!-- Ph.D. Section -->
-<div class="form-group-container">
-  <div class="section-header">Ph.D.</div>
-  <div class="form-content">
-    <div class="form-row">
-      <div class="form-field">
-        <label>Status<span class="required">*</span></label>
-        <select id="phdStatus" name="phdStatus" onchange="updatePhdFields()" required>
-          <option value="">Select</option>
-          <option value="completed">Completed</option>
-          <option value="pursuing">Pursuing</option>
-          <option value="thesis-submitted">Thesis Submitted</option>
-          <option value="not-applicable">Not Applicable</option>
-        </select>
-      </div>
-      <div class="form-field" id="phdUniversityField">
-        <label>University / Institute<span class="required">*</span></label>
-        <input type="text" id="phdUniversity" name="phdUniversity" placeholder="Enter University / Institute" />
-      </div>
-      <div class="form-field" id="phdYearField">
-        <label>Year of Passing<span class="required">*</span></label>
-        <input type="text" id="phdYear" name="phdYear" placeholder="Enter Year of Passing" />
-      </div>
-    </div>
-  </div>
-</div>
- 
+            <!-- Ph.D. Section -->
+            <div class="form-group-container">
+              <div class="section-header">Ph.D.</div>
+              <div class="form-content">
+                <div class="form-row">
+                  <div class="form-field">
+                    <label>Status<span class="required">*</span></label>
+                    <select id="phdStatus" name="phdStatus" onchange="updatePhdFields()" required>
+                      <option value="">Select</option>
+                      <option value="completed">Completed</option>
+                      <option value="pursuing">Pursuing</option>
+                      <option value="thesis-submitted">Thesis Submitted</option>
+                      <option value="not-applicable">Not Applicable</option>
+                    </select>
+                  </div>
+                  <div class="form-field">
+                    <label>University / Institute<span class="required">*</span></label>
+                    <input type="text" id="phdUniversity" name="phdUniversity" placeholder="Enter University / Institute" />
+                  </div>
+                  <div class="form-field">
+                    <label>Year of Passing<span class="required">*</span></label>
+                    <input type="text" id="phdYear" name="phdYear" placeholder="Enter Year of Passing" />
+                  </div>
+                </div>
+              </div>
+            </div>
 
             <!-- exam section -->
             <div class="form-group-container">
@@ -624,6 +623,8 @@
       </div>
     </div>
 
+    <a href="export_degree.php" class="btn btn-success">📥 Download Excel</a>
+
     <script src="script.js"></script>
     <script>
       // Function to export data to Excel
@@ -846,36 +847,6 @@
         });
       }
       
-
-        function updatePhdFields() {
-          const statusEl = document.getElementById("phdStatus");
-          const universityField = document.getElementById("phdUniversityField");
-          const yearField = document.getElementById("phdYearField");
-      
-          if (!statusEl || !universityField || !yearField) {
-            console.warn("Ph.D. fields not found.");
-            return;
-          }
-      
-          const status = statusEl.value;
-          const shouldShow = status !== "not-applicable" && status !== "";
-      
-          universityField.style.display = shouldShow ? "block" : "none";
-          yearField.style.display = shouldShow ? "block" : "none";
-        }
-      
-        document.addEventListener("DOMContentLoaded", () => {
-          updatePhdFields();
-      
-          // Attach event listener again in case inline onchange isn't picked up
-          const statusEl = document.getElementById("phdStatus");
-          if (statusEl) {
-            statusEl.addEventListener("change", updatePhdFields);
-          }
-        });
-
-      
-
       // File upload handling
       function handleFileUpload(input) {
         const file = input.files[0];
@@ -899,39 +870,17 @@
       
       // Initialize form with one qualification and one experience by default
       document.addEventListener('DOMContentLoaded', function() {
-        // Safe initialization with null checks
-        function safeAddListener(selector, event, handler) {
-          const element = document.querySelector(selector);
-          if (element) {
-            element.addEventListener(event, handler);
-          } else {
-            console.warn(`Element ${selector} not found for event listener`);
-          }
-        }
-      
-        // Add event listeners with null checks
-        safeAddListener('.add-qualification-btn', 'click', addQualification);
-        safeAddListener('.add-experience-btn', 'click', addExperience); 
-        safeAddListener('.add-research-paper-btn', 'click', addResearchPaper);
-      
-        // Handle qualification remove button
+        // Add event listeners for dynamic fields
+        document.querySelector('.add-qualification-btn').addEventListener('click', addQualification);
+        document.querySelector('.add-experience-btn').addEventListener('click', addExperience);
+        document.querySelector('.add-research-paper-btn').addEventListener('click', addResearchPaper);
+        
+        // Show remove button for the first qualification if it exists
         const firstQualRemoveBtn = document.querySelector('.remove-qualification-btn');
         if (firstQualRemoveBtn) {
           firstQualRemoveBtn.style.display = 'block';
-        } else {
-          console.warn('No qualification remove button found');
         }
-      
-        // Initialize exam toggles safely
-        ['net', 'set'].forEach((exam) => {
-          const element = document.getElementById(`${exam}Status`);
-          if (element) {
-            toggleExam(exam, element.value);
-          }
-        });
       });
-
-      
     </script>
   </body>
 </html>

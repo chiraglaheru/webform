@@ -1,7 +1,11 @@
 <?php
 // Database connection
-$conn = new mysqli('localhost', 'root', 'root', 'form_data', null, '/Applications/MAMP/tmp/mysql/mysql.sock');
+$servername = "localhost";
+$username = "root";
+$password = "1234";
+$database = "form_data";
 
+$conn = new mysqli('127.0.0.1', 'root', '1234', 'form_data', 8889);
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
@@ -11,20 +15,11 @@ $errors = [];
 
 $required_fields = [
     'post_applied_for' => "Position Applied For",
-    'title' => "Title",
     'first_name' => "First Name",
     'last_name' => "Last Name",
     'dob' => "Date of Birth",
-    'gender' => "Gender",
-    'marital_status' => "Marital Status",
     'email' => "Email",
-    'caste' => "Caste/Subcaste",
-    'aadhar' => "Aadhar Number",
-    'pan' => "PAN Number",
-    'state' => "State",
-    'city' => "City",
     'address' => "Address",
-    'pincode' => "PIN Code",
     'mobile' => "Mobile Number",
     'expected_salary' => "Expected Salary"
 ];
@@ -66,21 +61,21 @@ if (isset($_FILES['cv']) && $_FILES['cv']['error'] === UPLOAD_ERR_OK) {
 // Prepare variables
 $post_applied_for = $_POST['post_applied_for'];
 $other_post_type = ($post_applied_for === 'other') ? $_POST['other_post_type'] : null;
-$title = $_POST['title'];
+// $title = $_POST['title'];
 $first_name = $_POST['first_name'];
 $middle_name = $_POST['middle_name'] ?? null;
 $last_name = $_POST['last_name'];
 $dob = $_POST['dob'];
-$gender = $_POST['gender'];
-$marital_status = $_POST['marital_status'];
+// $gender = $_POST['gender'];
+// $marital_status = $_POST['marital_status'];
 $email = $_POST['email'];
-$caste = $_POST['caste'];
-$aadhar = $_POST['aadhar'];
-$pan = $_POST['pan'];
-$state = $_POST['state'];
-$city = $_POST['city'];
+// $caste = $_POST['caste'];
+// $aadhar = $_POST['aadhar'];
+// $pan = $_POST['pan'];
+// $state = $_POST['state'];
+// $city = $_POST['city'];
 $address = $_POST['address'];
-$pincode = $_POST['pincode'];
+// $pincode = $_POST['pincode'];
 $mobile = $_POST['mobile'];
 $mother_tongue = $_POST['mother_tongue'] ?? null;
 $other_language = $_POST['other_language'] ?? null;
@@ -94,17 +89,16 @@ $created_at = date('Y-m-d H:i:s');
 
 // Insert into non_teaching_applications
 $stmt = $conn->prepare("INSERT INTO non_teaching_applications (
-    post_applied_for, other_post_type, title, first_name, middle_name, last_name,
-    dob, gender, marital_status, email, caste, aadhar, pan, state, city,
-    address, pincode, mobile, mother_tongue, other_language,
+    post_applied_for, other_post_type, first_name, middle_name, last_name,
+    dob, email,
+    address , mobile, mother_tongue, other_language,
     typing_speed_english, typing_speed_marathi, joining_date,
     expected_salary, current_salary, comments, cv_filename, created_at
-) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-$stmt->bind_param("sssssssssssssssssssssssssss",
-    $post_applied_for, $other_post_type, $title, $first_name, $middle_name, $last_name,
-    $dob, $gender, $marital_status, $email, $caste, $aadhar, $pan, $state, $city,
-    $address, $pincode, $mobile, $mother_tongue, $other_language,
+$stmt->bind_param("sssssssssssssssssss",
+    $post_applied_for, $other_post_type, $first_name, $middle_name, $last_name,
+    $dob, $email, $address, $mobile, $mother_tongue, $other_language,
     $english_typing, $marathi_typing, $joining_date,
     $expected_salary, $current_salary, $comments, $cv_filename, $created_at
 );

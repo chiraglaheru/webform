@@ -1,7 +1,7 @@
 <?php
 $servername = "localhost";
 $username = "root";
-$password = "root";
+$password = "1234";
 $database = "form_data";
 $port = 8889;
 

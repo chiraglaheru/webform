@@ -251,10 +251,11 @@
                     </div>
 
                     <!-- Excel Export Button -->
-                    <button type="button" onclick="exportNonTeachingToExcel()" class="export-btn">
-                      Download Excel Report
-                  </button>
-                  
+<div class="submit-section">
+    <button type="button" onclick="exportNonTeachingToExcel()" class="export-btn">
+        Download Excel Report
+    </button>
+</div>
                 </form>
             </div>
         </div>
@@ -367,32 +368,30 @@
             }
         }
 
+        function exportNonTeachingToExcel() {
+            // Create a temporary form
+            const tempForm = document.createElement('form');
+            tempForm.method = 'POST';
+            tempForm.action = 'export_non_teaching.php';
+            
+            // Add a hidden input to trigger the export
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'export_data';
+            input.value = '1';
+            tempForm.appendChild(input);
+            
+            // Submit the form
+            document.body.appendChild(tempForm);
+            tempForm.submit();
+            document.body.removeChild(tempForm);
+        }
+
         // Show/hide other post field
         document.getElementById('postApplied').addEventListener('change', function() {
             const otherPostField = document.getElementById('otherPostField');
             otherPostField.style.display = this.value === 'other' ? 'block' : 'none';
         });
     </script>
-    <script>
-      function exportNonTeachingToExcel() {
-          // Create a temporary form
-          const tempForm = document.createElement('form');
-          tempForm.method = 'POST';
-          tempForm.action = 'export_non_teaching.php';
-          tempForm.target = '_blank'; // Open in new tab
-          
-          // Add any required parameters
-          const input = document.createElement('input');
-          input.type = 'hidden';
-          input.name = 'export_data';
-          input.value = '1';
-          tempForm.appendChild(input);
-          
-          // Submit the form
-          document.body.appendChild(tempForm);
-          tempForm.submit();
-          document.body.removeChild(tempForm);
-      }
-      </script>
 </body>
 </html>

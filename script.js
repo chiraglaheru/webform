@@ -60,54 +60,28 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // Ph.D. section logic
+  window.updatePhdFields = function () {
+    const status = document.getElementById("phdStatus").value;
+    const university = document.getElementById("phdUniversity");
+    const year = document.getElementById("phdYear");
 
-  document.addEventListener("DOMContentLoaded", () => {
-    const phdStatusEl = document.getElementById("phdStatus");
-    const phdUniversityField = document.getElementById("phdUniversityField");
-    const phdYearField = document.getElementById("phdYearField");
-  
-    if (!phdStatusEl || !phdUniversityField || !phdYearField) {
-      console.warn("Ph.D. fields not found in the DOM.");
-      return;
+    if (status === "completed") {
+      university.disabled = false;
+      year.disabled = false;
+    } else if (status === "pursuing" || status === "thesis-submitted") {
+      university.disabled = false;
+      year.disabled = true;
+      year.value = "";
+    } else if (status === "not-applicable") {
+      university.disabled = true;
+      university.value = "";
+      year.disabled = true;
+      year.value = "";
+    } else {
+      university.disabled = false;
+      year.disabled = false;
     }
-  
-    function updatePhdFields() {
-      const status = phdStatusEl.value;
-      const shouldShow = status !== "not-applicable" && status !== "";
-      phdUniversityField.style.display = shouldShow ? "block" : "none";
-      phdYearField.style.display = shouldShow ? "block" : "none";
-    }
-  
-    // Run on change and once on load
-    phdStatusEl.addEventListener("change", updatePhdFields);
-    updatePhdFields();
-  });
-  
-  
-
-
-  // window.updatePhdFields = function () {
-  //   const status = document.getElementById("phdStatus").value;
-  //   const university = document.getElementById("phdUniversity");
-  //   const year = document.getElementById("phdYear");
-
-  //   if (status === "completed") {
-  //     university.disabled = false;
-  //     year.disabled = false;
-  //   } else if (status === "pursuing" || status === "thesis-submitted") {
-  //     university.disabled = false;
-  //     year.disabled = true;
-  //     year.value = "";
-  //   } else if (status === "not-applicable") {
-  //     university.disabled = true;
-  //     university.value = "";
-  //     year.disabled = true;
-  //     year.value = "";
-  //   } else {
-  //     university.disabled = false;
-  //     year.disabled = false;
-  //   }
-  // };
+  };
 
   // Resume upload feedback
   window.handleFileUpload = function (input) {
@@ -145,37 +119,13 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("age").value = age > 0 ? age : "";
   });
 
-
-// Replace the existing code with this robust version
-function initializeExams() {
-    const exams = ['net', 'set']; // Only include exams that exist in your HTML
-    exams.forEach((exam) => {
-        const element = document.getElementById(`${exam}Status`);
-        if (!element) {
-            console.warn(`${exam}Status element not found`);
-            return;
-        }
-        try {
-            toggleExam(exam, element.value);
-        } catch (e) {
-            console.error(`Error initializing ${exam}:`, e);
-        }
-    });
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize exams first
-    initializeExams();
-    
-    // Then setup other event listeners
-    const addExperienceBtn = document.querySelector('.add-qualification-btn'); // Note: using your actual HTML class
-    if (addExperienceBtn) {
-        addExperienceBtn.addEventListener('click', addExperience);
-    } else {
-        console.warn('Add experience button not found');
-    }
-    
-    // Rest of your initialization code...
+  // Initial toggle setup (prevent broken state on load)
+  updatePhdFields();
+  ["net", "set", "slet", "gate"].forEach((exam) => {
+    const status = document.getElementById(`${exam}Status`).value;
+    toggleExam(exam, status);
+  });
+  toggleWorkExperience("experience");
 });
 
 const indianStates = [
@@ -360,211 +310,34 @@ function removeExperience(btn) {
   }
 }
 
-document.getElementById('applicationForm').addEventListener('submit', function(e) {
-  e.preventDefault();
+let experienceIndex = 0;
+
+// Work experience toggle function
+function workExperience(value) {
+    const experienceSection = document.getElementById("experienceContainer");
+    const addExpSection = document.querySelector(".add-experience-section");
+    const buttons = document.querySelectorAll(".work-exp-toggle .toggle-btn");
+
+    if (value === "fresher") {
+        if (experienceSection) experienceSection.style.display = "none";
+        if (addExpSection) addExpSection.style.display = "none";
+        buttons.forEach(button => {
+            if (button.dataset.value === "fresher") {
+                button.classList.add("active");
+            } else {
+                button.classList.remove("active");
+            }
+        });
+    } else if (value === "experience") {
+        if (experienceSection) experienceSection.style.display = "block";
+        if (addExpSection) addExpSection.style.display = "block";
+        buttons.forEach(button => {
+            if (button.dataset.value === "experience") {
+                button.classList.add("active");
+            } else {
+                button.classList.remove("active");
+            }
+        });
+    }
+}
   
-  // Calculate age from DOB
-  const dob = new Date(document.getElementById('dob').value);
-  const ageDiff = Date.now() - dob.getTime();
-  const ageDate = new Date(ageDiff);
-  const calculatedAge = Math.abs(ageDate.getUTCFullYear() - 1970);
-  document.getElementById('age').value = calculatedAge;
-
-
-  // Collect all form data
-  const formData = new FormData(this);
-
-  // Add qualifications data
-  const qualificationItems = document.querySelectorAll('.qualification-item');
-  qualificationItems.forEach((item, index) => {
-      formData.append(`degree[${index}]`, item.querySelector('.degree-select').value);
-      formData.append(`degree_name[${index}]`, item.querySelector('.degree-name').value);
-      formData.append(`education_mode[${index}]`, item.querySelector('.education-mode').value);
-      formData.append(`university_name[${index}]`, item.querySelector('.university-name').value);
-      formData.append(`specialization[${index}]`, item.querySelector('.specialization').value);
-      formData.append(`year_of_passing[${index}]`, item.querySelector('.year-passing').value);
-      formData.append(`percentage[${index}]`, item.querySelector('.percentage').value);
-      formData.append(`cgpa[${index}]`, item.querySelector('.cgpa').value);
-  });
-
-  // Add work experience data
-  const experienceItems = document.querySelectorAll('.experience-item');
-  experienceItems.forEach((item, index) => {
-      formData.append(`organization[${index}]`, item.querySelector('.experience-organization').value);
-      formData.append(`designation[${index}]`, item.querySelector('.experience-designation').value);
-      formData.append(`from_date[${index}]`, item.querySelector('.experience-from').value);
-      formData.append(`to_date[${index}]`, item.querySelector('.experience-to').value);
-      formData.append(`currently_working[${index}]`, item.querySelector('.experience-current-role').checked ? '1' : '0');
-      formData.append(`salary[${index}]`, item.querySelector('.experience-salary').value);
-  });
-
-  // Add research papers data
-  const researchItems = document.querySelectorAll('.research-paper-item');
-  researchItems.forEach((item, index) => {
-      formData.append(`paper_title[${index}]`, item.querySelector('.paper-title').value);
-      formData.append(`journal_name[${index}]`, item.querySelector('.journal-name').value);
-      formData.append(`year_of_publication[${index}]`, item.querySelector('.publication-year').value);
-  });
-
-  // Submit form via AJAX
-  fetch('process_degree.php', {
-      method: 'POST',
-      body: formData
-  })
-  .then(response => {
-      if (response.ok) {
-          window.location.href = 'application_success.html';
-      } else {
-          alert('Error submitting form');
-      }
-  })
-  .catch(error => {
-      console.error('Error:', error);
-      alert('Error submitting form');
-  });
-});
-
-// Function to add qualification fields
-function addQualification() {
-  const container = document.getElementById('qualificationsContainer');
-  const index = container.children.length;
-  const newQual = document.createElement('div');
-  newQual.className = 'qualification-item';
-  newQual.dataset.index = index;
-  newQual.innerHTML = `
-      <div class="form-row">
-          <div class="form-field">
-              <label>Degree<span class="required">*</span></label>
-              <select class="degree-select" required>
-                  <option value="">Select degree</option>
-                  <option value="phd">Ph.D</option>
-                  <option value="masters">Master's</option>
-                  <option value="bachelors">Bachelor's</option>
-              </select>
-          </div>
-          <div class="form-field">
-              <label>Degree Name</label>
-              <input type="text" class="degree-name" placeholder="Enter degree name">
-          </div>
-      </div>
-      <div class="form-row">
-          <div class="form-field">
-              <label>Education Mode<span class="required">*</span></label>
-              <select class="education-mode" required>
-                  <option value="">Select mode</option>
-                  <option value="regular">Regular</option>
-                  <option value="distance">Distance</option>
-              </select>
-          </div>
-          <div class="form-field">
-              <label>University Name<span class="required">*</span></label>
-              <input type="text" class="university-name" placeholder="Enter university name" required>
-          </div>
-      </div>
-      <div class="form-row">
-          <div class="form-field">
-              <label>Specialization</label>
-              <input type="text" class="specialization" placeholder="Enter specialization">
-          </div>
-          <div class="form-field">
-              <label>Year of Passing<span class="required">*</span></label>
-              <input type="date" class="year-passing" required>
-          </div>
-      </div>
-      <div class="form-row">
-          <div class="form-field">
-              <label>Percentage</label>
-              <input type="number" step="0.01" class="percentage" placeholder="Enter Percentage">
-          </div>
-          <div class="form-field">
-              <label>CGPA</label>
-              <input type="number" step="0.1" class="cgpa" placeholder="Enter CGPA">
-          </div>
-          <div class="form-field remove-btn-container">
-              <button type="button" class="remove-qualification-btn" onclick="removeQualification(${index})">
-                  ✕ Remove
-              </button>
-          </div>
-      </div>
-  `;
-  container.appendChild(newQual);
-}
-
-// Function to remove qualification
-function removeQualification(index) {
-  const item = document.querySelector(`.qualification-item[data-index="${index}"]`);
-  if (item) item.remove();
-  // Reindex remaining items
-  const items = document.querySelectorAll('.qualification-item');
-  items.forEach((item, i) => {
-      item.dataset.index = i;
-      const btn = item.querySelector('.remove-qualification-btn');
-      if (btn) btn.onclick = () => removeQualification(i);
-  });
-}
-
-// Similar functions for adding/removing work experience and research papers
-function addExperience() {
-  const container = document.getElementById('experienceContainer');
-  const index = container.children.length;
-  const newExp = document.createElement('div');
-  newExp.className = 'experience-item';
-  newExp.dataset.index = index;
-  newExp.innerHTML = `
-      <div class="form-row">
-          <div class="form-field">
-              <label>Organization<span class="required">*</span></label>
-              <input type="text" class="experience-organization" required>
-          </div>
-          <div class="form-field">
-              <label>Designation<span class="required">*</span></label>
-              <input type="text" class="experience-designation" required>
-          </div>
-      </div>
-      <div class="form-row">
-          <div class="form-field">
-              <label>From Date<span class="required">*</span></label>
-              <input type="date" class="experience-from" required>
-          </div>
-          <div class="form-field">
-              <label>To Date</label>
-              <input type="date" class="experience-to">
-          </div>
-      </div>
-      <div class="form-row">
-          <div class="form-field">
-              <label>Salary</label>
-              <input type="number" class="experience-salary">
-          </div>
-          <div class="form-field checkbox-field">
-              <input type="checkbox" class="experience-current-role">
-              <label>Currently working</label>
-          </div>
-          <div class="form-field remove-btn-container">
-              <button type="button" class="remove-experience-btn" onclick="removeExperience(${index})">
-                  ✕ Remove
-              </button>
-          </div>
-      </div>
-  `;
-  container.appendChild(newExp);
-}
-
-function removeExperience(index) {
-  const item = document.querySelector(`.experience-item[data-index="${index}"]`);
-  if (item) item.remove();
-  // Reindex remaining items
-  const items = document.querySelectorAll('.experience-item');
-  items.forEach((item, i) => {
-      item.dataset.index = i;
-      const btn = item.querySelector('.remove-experience-btn');
-      if (btn) btn.onclick = () => removeExperience(i);
-  });
-}
-
-// Initialize form with one qualification and one experience by default
-document.addEventListener('DOMContentLoaded', function() {
-  addQualification();
-  addExperience();
-});
-

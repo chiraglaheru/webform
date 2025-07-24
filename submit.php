@@ -2,10 +2,10 @@
 
 $servername = "localhost";
 $username = "root";
-$password = "root";
+$password = "1234";
 $database = "form_data";
 
-$conn = new mysqli("localhost", "root", "root", "form_data", 8889);
+$conn = new mysqli("localhost", "root", "1234", "form_data", 8889);
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
