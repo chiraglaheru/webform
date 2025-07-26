@@ -1,11 +1,11 @@
 <?php
-
+// Database connection
 $servername = "localhost";
 $username = "root";
 $password = "1234";
 $database = "form_data";
 
-$conn = new mysqli("localhost", "root", "1234", "form_data", 8889);
+$conn = new mysqli('127.0.0.1', 'root', '1234', 'form_data', 8889);
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
@@ -128,6 +128,78 @@ foreach ($_POST['scopus_publications'] as $i => $val) {
     $stmt->execute();
     $stmt->close();
 }
+
+
+
+// Insert PhD details if provided
+if (!empty($_POST['phd_status'])) {
+    $stmt = $conn->prepare("INSERT INTO phd_details (
+        application_id, status, university_institute, year_of_passing
+    ) VALUES (?, ?, ?, ?)");
+    
+    $stmt->bind_param("isss",
+        $application_id,
+        $_POST['phd_status'],
+        $_POST['phd_university'],
+        $_POST['phd_year']
+    );
+    
+    if (!$stmt->execute()) {
+        error_log("PhD details error: " . $stmt->error);
+    }
+    $stmt->close();
+}
+
+
+// === Courses Taught ===
+$stmt = $conn->prepare("INSERT INTO courses_taught (
+    application_id, college_name, class_name, subject_name, years_experience,
+    from_date, to_date, department_type, contract_type, last_salary,
+    approved_by_university, letter_number, letter_date
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+
+$stmt->bind_param("isssissssssss",
+    $application_id,
+    $_POST['college_name'],
+    $_POST['class_name'],
+    $_POST['subject_name'],
+    $_POST['years_experience'],
+    $_POST['courses_from_date'],
+    $_POST['courses_to_date'],
+    $_POST['department_type'],
+    $_POST['contract_type'],
+    $_POST['last_salary'],
+    $_POST['approved_by_university'],
+    $_POST['letter_number'],
+    $_POST['letter_date']
+);
+
+if (!$stmt->execute()) {
+    error_log("Courses Taught error: " . $stmt->error);
+}
+$stmt->close();
+
+$conn->close();
+echo "✅ Application submitted successfully.";
+
+
+// Insert B.Ed details
+$stmt = $conn->prepare("INSERT INTO bed_details (
+    application_id, university_institute, year_of_passing
+) VALUES (?, ?, ?)");
+
+$stmt->bind_param("iss",
+    $application_id,
+    $_POST['bed_university'],
+    $_POST['bed_year']
+);
+
+if (!$stmt->execute()) {
+    error_log("B.Ed details error: " . $stmt->error);
+}
+$stmt->close();
+
+
 
 // === Awards ===
 $stmt = $conn->prepare("INSERT INTO awards (application_id, award_title, award_organization, award_nature, award_salary) VALUES (?, ?, ?, ?, ?)");
