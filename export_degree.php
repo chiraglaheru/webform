@@ -145,19 +145,7 @@ while ($r = $q->fetch_assoc()) {
     $row++;
 }
 
-// ========== SHEET 3: PhD Details ==========
-$phdSheet = $spreadsheet->createSheet();
-$phdSheet->setTitle('PhD Details');
-$phdSheet->fromArray([
-    'Application ID', 'Status', 'University/Institute', 'Year of Passing'
-], NULL, 'A1');
-$p = $conn->query("SELECT * FROM degree_phd_details");
-$row = 2;
-while ($r = $p->fetch_assoc()) {
-    $phdSheet->fromArray(array_values($r), NULL, "A$row");
-    $row++;
-}
-
+// ========== SHEET 3: PhD Details =========
 // ========== SHEET 4: Work Experience ==========
 $expSheet = $spreadsheet->createSheet();
 $expSheet->setTitle('Work Experience');
@@ -171,6 +159,53 @@ while ($r = $e->fetch_assoc()) {
     $expSheet->fromArray(array_values($r), NULL, "A$row");
     $row++;
 }
+// ========== SHEET 6: PhD Details ==========
+$phdSheet = $spreadsheet->createSheet();
+$phdSheet->setTitle('PhD Details');
+$phdHeaders = [
+    'Application ID', 'Status', 'University/Institute', 'Year of Passing'
+];
+$phdSheet->fromArray($phdHeaders, NULL, 'A1');
+$phdSheet->getStyle('A1:D1')->applyFromArray($headerStyle);
+
+$phdData = $conn->query("SELECT * FROM degree_phd_details");
+$row = 2;
+while ($phd = $phdData->fetch_assoc()) {
+    $phdSheet->fromArray([
+        $phd['application_id'],
+        $phd['status'],
+        $phd['university_institute'],
+        $phd['year_of_passing']
+    ], NULL, "A$row");
+    $row++;
+}
+
+// ========== SHEET 7: Research Publications ==========
+$researchSheet = $spreadsheet->createSheet();
+$researchSheet->setTitle('Research Publications');
+$researchHeaders = [
+    'Application ID', 'Title', 'Journal Name', 'Year of Publication',
+    'Scopus Publications', 'Scopus ID', 'Conference Presented', 'Approved Papers'
+];
+$researchSheet->fromArray($researchHeaders, NULL, 'A1');
+$researchSheet->getStyle('A1:H1')->applyFromArray($headerStyle);
+
+$researchData = $conn->query("SELECT * FROM degree_research_publications");
+$row = 2;
+while ($pub = $researchData->fetch_assoc()) {
+    $researchSheet->fromArray([
+        $pub['application_id'],
+        $pub['title'],
+        $pub['journal_name'],
+        $pub['year_of_publication'],
+        $pub['scopus_publications'] ? 'Yes' : 'No',
+        $pub['scopus_id'],
+        $pub['conference_presented'] ? 'Yes' : 'No',
+        $pub['approved_papers']
+    ], NULL, "A$row");
+    $row++;
+}
+
 
 // ========== SHEET 5: Courses Taught ==========
 $coursesSheet = $spreadsheet->createSheet();
@@ -188,20 +223,6 @@ while ($r = $c->fetch_assoc()) {
     $row++;
 }
 
-// ========== SHEET 6: Research Publications ==========
-$researchSheet = $spreadsheet->createSheet();
-$researchSheet->setTitle('Research Publications');
-$researchSheet->fromArray([
-    'Application ID', 'Scopus Publications', 'Scopus ID', 
-    'Conference Presented', 'Title', 'Journal Name',
-    'Year of Publication', 'Approved Papers'
-], NULL, 'A1');
-$r = $conn->query("SELECT * FROM degree_research_publications");
-$row = 2;
-while ($rowData = $r->fetch_assoc()) {
-    $researchSheet->fromArray(array_values($rowData), NULL, "A$row");
-    $row++;
-}
 
 // ========== SHEET 7: Awards ==========
 $awardsSheet = $spreadsheet->createSheet();

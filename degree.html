@@ -480,18 +480,18 @@
                     <div class="form-row">
                       <div class="form-field">
                         <label>Scopus Indexed Publications</label>
-                        <input type="text" class="scopus-publications" name="scopus_publications" placeholder="Enter number of publications" />
+                        <input type="text" class="scopus-publications" name="scopus_publications[]" placeholder="Enter number of publications" />
                       </div>
                       <div class="form-field">
                         <label>Scopus ID</label>
-                        <input type="text" class="scopus-id" name="scopus_id" placeholder="Enter Scopus ID" />
+                        <input type="text" class="scopus-id" name="scopus_id[]" placeholder="Enter Scopus ID" />
                       </div>
                     </div>
-
+            
                     <div class="form-row">
                       <div class="form-field">
                         <label>Presented in Conference</label>
-                        <select class="conference-select" name="conference_presented">
+                        <select class="conference-select" name="conference_presented[]">
                           <option value="">Select</option>
                           <option value="yes">Yes</option>
                           <option value="no">No</option>
@@ -502,7 +502,7 @@
                         <input type="text" class="paper-title" name="paper_title[]" placeholder="Enter journal title" />
                       </div>
                     </div>
-
+            
                     <div class="form-row">
                       <div class="form-field">
                         <label>Name of Journal</label>
@@ -510,14 +510,14 @@
                       </div>
                       <div class="form-field">
                         <label>Year of Publication</label>
-                        <input type="date" class="publication-year" name="year_of_publication[]" />
+                        <input type="text" class="publication-year" name="year_of_publication[]" placeholder="YYYY" pattern="\d{4}" title="Please enter a 4-digit year" />
                       </div>
                     </div>
-
+            
                     <div class="form-row">
                       <div class="form-field">
                         <label>Number of Approved Papers</label>
-                        <input type="number" class="approved-papers" name="approved_papers" placeholder="Enter number of approved papers" />
+                        <input type="number" class="approved-papers" name="approved_papers[]" placeholder="Enter number of approved papers" min="0" />
                       </div>
                       <div class="form-field remove-btn-container">
                         <button type="button" class="remove-research-paper-btn" onclick="removeResearchPaper(0)" style="display: none">✕ Remove</button>
@@ -525,7 +525,7 @@
                     </div>
                   </div>
                 </div>
-
+            
                 <div class="add-research-paper-section">
                   <button type="button" class="add-research-paper-btn" onclick="addResearchPaper()">+ Add Research Paper</button>
                 </div>
