@@ -28,23 +28,23 @@ try {
         'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER]
     ];
 
-    // Headers matching submit.php fields
+    // Updated headers to match new structure
     $applicationHeaders = [
         "ID", "Post Applied For", "First Name", "Middle Name", "Last Name", 
         "Date of Birth", "Gender", "Marital Status", "Email", "Alternate Email",
         "Caste", "Aadhar", "PAN", "State", "City", "Address", "PinCode",
-        "Mobile", "Alternate Mobile", "Institute Applied To", "Current Salary", 
-        "Expected Salary", "Extra Curricular", "Reference Name", "Reference Applied For",
-        "Resume File", "PhD Status", "PhD University", "PhD Year", "BEd University", 
-        "BEd Year", "College Name", "Class Name", "Subject Name", "Years Experience",
-        "Courses From Date", "Courses To Date", "Department Type", "Contract Type",
+        "Mobile", "Alternate Mobile", "Institute Applied To", 
+        "Resume File", "PhD Status", "PhD University", "PhD Year", 
+        "BEd University", "BEd Year", "College Name", "Class Name", 
+        "Subject Name", "Years Experience", "Courses From Date", 
+        "Courses To Date", "Department Type", "Contract Type",
         "Last Salary", "Approved By University", "Letter Number", "Letter Date"
     ];
     
     $appSheet->fromArray($applicationHeaders, NULL, 'A1');
-    $appSheet->getStyle('A1:AP1')->applyFromArray($headerStyle);
+    $appSheet->getStyle('A1:AK1')->applyFromArray($headerStyle);
 
-    // Fetch data from applications table (matches submit.php)
+    // Fetch data from applications table (matches new structure)
     $applications = $conn->query("SELECT * FROM applications");
     $row = 2;
 
@@ -70,11 +70,6 @@ try {
             $app['mobile'],
             $app['alternate_mobile'],
             $app['institute_applied_to'],
-            $app['current_salary'],
-            $app['expected_salary'],
-            $app['extra_curricular'],
-            $app['reference_name'],
-            $app['reference_applied_for'],
             $app['resume_filename'],
             $app['phd_status'],
             $app['phd_university'],
@@ -100,13 +95,30 @@ try {
         // Resume hyperlink
         if (!empty($app['resume_filename'])) {
             $resumeURL = "http://localhost/resumes/" . $app['resume_filename'];
-            $appSheet->setCellValue('Z'.$row, '=HYPERLINK("'.$resumeURL.'", "Download")');
-            $appSheet->getStyle('Z'.$row)->getFont()->setColor(new \PhpOffice\PhpSpreadsheet\Style\Color(\PhpOffice\PhpSpreadsheet\Style\Color::COLOR_BLUE));
+            $appSheet->setCellValue('U'.$row, '=HYPERLINK("'.$resumeURL.'", "Download")');
+            $appSheet->getStyle('U'.$row)->getFont()->setColor(new \PhpOffice\PhpSpreadsheet\Style\Color(\PhpOffice\PhpSpreadsheet\Style\Color::COLOR_BLUE));
         }
         $row++;
     }
 
-    // ========== SHEET 2: Qualifications ==========
+    // ========== SHEET 2: Additional Information ==========
+    $addInfoSheet = $spreadsheet->createSheet();
+    $addInfoSheet->setTitle('Additional Info');
+    $addInfoHeaders = [
+        'Application ID', 'Reference Name', 'Reference Applied For',
+        'Current Salary', 'Expected Salary', 'Extra Curricular'
+    ];
+    $addInfoSheet->fromArray($addInfoHeaders, NULL, 'A1');
+    $addInfoSheet->getStyle('A1:F1')->applyFromArray($headerStyle);
+    
+    $additionalInfo = $conn->query("SELECT * FROM additional_information");
+    $row = 2;
+    while ($info = $additionalInfo->fetch_assoc()) {
+        $addInfoSheet->fromArray(array_values($info), NULL, "A$row");
+        $row++;
+    }
+
+    // ========== SHEET 3: Qualifications ==========
     $qualSheet = $spreadsheet->createSheet();
     $qualSheet->setTitle('Qualifications');
     $qualHeaders = [
@@ -124,7 +136,7 @@ try {
         $row++;
     }
 
-    // ========== SHEET 3: Work Experience ==========
+    // ========== SHEET 4: Work Experience ==========
     $expSheet = $spreadsheet->createSheet();
     $expSheet->setTitle('Work Experience');
     $expHeaders = [
@@ -150,7 +162,7 @@ try {
         $row++;
     }
 
-    // ========== SHEET 4: Research Publications ==========
+    // ========== SHEET 5: Research Publications ==========
     $researchSheet = $spreadsheet->createSheet();
     $researchSheet->setTitle('Research Publications');
     $researchHeaders = [
@@ -178,60 +190,56 @@ try {
         $row++;
     }
 
-   
-
-// ========== SHEET 5: Courses Taught ==========
-$coursesSheet = $spreadsheet->createSheet();
-$coursesSheet->setTitle('Courses Taught');
-$coursesHeaders = [
-    'Application ID', 'College Name', 'Class Name', 'Subject Name', 
-    'Years of Experience', 'From Date', 'To Date', 'Department Type',
-    'Contract Type', 'Last Salary', 'Approved By University',
-    'Letter Number', 'Letter Date'
-];
-$coursesSheet->fromArray($coursesHeaders, NULL, 'A1');
-$coursesSheet->getStyle('A1:M1')->applyFromArray($headerStyle);
-
-// Set column widths
-$coursesSheet->getColumnDimension('A')->setWidth(12);
-$coursesSheet->getColumnDimension('B')->setWidth(25);
-$coursesSheet->getColumnDimension('C')->setWidth(15);
-$coursesSheet->getColumnDimension('D')->setWidth(25);
-$coursesSheet->getColumnDimension('E')->setWidth(15);
-$coursesSheet->getColumnDimension('F')->setWidth(12);
-$coursesSheet->getColumnDimension('G')->setWidth(12);
-$coursesSheet->getColumnDimension('H')->setWidth(20);
-$coursesSheet->getColumnDimension('I')->setWidth(15);
-$coursesSheet->getColumnDimension('J')->setWidth(15);
-$coursesSheet->getColumnDimension('K')->setWidth(25);
-$coursesSheet->getColumnDimension('L')->setWidth(15);
-$coursesSheet->getColumnDimension('M')->setWidth(12);
-
-$courses = $conn->query("SELECT * FROM courses_taught");
-$row = 2;
-while ($course = $courses->fetch_assoc()) {
-    $courseData = [
-        $course['application_id'],
-        $course['college_name'],
-        $course['class_name'],
-        $course['subject_name'],
-        $course['years_experience'],
-        $course['from_date'],
-        $course['to_date'],
-        $course['department_type'],
-        $course['contract_type'],
-        $course['last_salary'],
-        $course['approved_by_university'],
-        $course['letter_number'],
-        $course['letter_date']
+    // ========== SHEET 6: Courses Taught ==========
+    $coursesSheet = $spreadsheet->createSheet();
+    $coursesSheet->setTitle('Courses Taught');
+    $coursesHeaders = [
+        'Application ID', 'College Name', 'Class Name', 'Subject Name', 
+        'Years of Experience', 'From Date', 'To Date', 'Department Type',
+        'Contract Type', 'Last Salary', 'Approved By University',
+        'Letter Number', 'Letter Date'
     ];
-    $coursesSheet->fromArray($courseData, NULL, "A$row");
-    $row++;
-}
+    $coursesSheet->fromArray($coursesHeaders, NULL, 'A1');
+    $coursesSheet->getStyle('A1:M1')->applyFromArray($headerStyle);
 
-// ... [rest of the export code remains the same] ...
+    // Set column widths
+    $coursesSheet->getColumnDimension('A')->setWidth(12);
+    $coursesSheet->getColumnDimension('B')->setWidth(25);
+    $coursesSheet->getColumnDimension('C')->setWidth(15);
+    $coursesSheet->getColumnDimension('D')->setWidth(25);
+    $coursesSheet->getColumnDimension('E')->setWidth(15);
+    $coursesSheet->getColumnDimension('F')->setWidth(12);
+    $coursesSheet->getColumnDimension('G')->setWidth(12);
+    $coursesSheet->getColumnDimension('H')->setWidth(20);
+    $coursesSheet->getColumnDimension('I')->setWidth(15);
+    $coursesSheet->getColumnDimension('J')->setWidth(15);
+    $coursesSheet->getColumnDimension('K')->setWidth(25);
+    $coursesSheet->getColumnDimension('L')->setWidth(15);
+    $coursesSheet->getColumnDimension('M')->setWidth(12);
 
-    // ========== SHEET 6: Awards ==========
+    $courses = $conn->query("SELECT * FROM courses_taught");
+    $row = 2;
+    while ($course = $courses->fetch_assoc()) {
+        $courseData = [
+            $course['application_id'],
+            $course['college_name'],
+            $course['class_name'],
+            $course['subject_name'],
+            $course['years_experience'],
+            $course['from_date'],
+            $course['to_date'],
+            $course['department_type'],
+            $course['contract_type'],
+            $course['last_salary'],
+            $course['approved_by_university'],
+            $course['letter_number'],
+            $course['letter_date']
+        ];
+        $coursesSheet->fromArray($courseData, NULL, "A$row");
+        $row++;
+    }
+
+    // ========== SHEET 7: Awards ==========
     $awardsSheet = $spreadsheet->createSheet();
     $awardsSheet->setTitle('Awards');
     $awardsHeaders = [
@@ -260,4 +268,4 @@ while ($course = $courses->fetch_assoc()) {
 
 } catch (Exception $e) {
     die("Error generating Excel: " . $e->getMessage());
-} 
+}

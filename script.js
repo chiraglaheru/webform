@@ -1,66 +1,357 @@
-
-document.addEventListener("DOMContentLoaded", () => {
-  // Gender toggle logic
-  window.selectGender = function (value) {
-    const genderButtons = document.querySelectorAll('[onclick^="selectGender"]');
-    genderButtons.forEach((btn) => btn.classList.remove("active"));
-    const selected = document.querySelector(`[onclick="selectGender('${value}')"]`);
-    if (selected) selected.classList.add("active");
-    document.getElementById("gender").value = value;
-  };
-
-  // Marital status toggle
-  window.selectMaritalStatus = function (value) {
-    const statusButtons = document.querySelectorAll('[onclick^="selectMaritalStatus"]');
-    statusButtons.forEach((btn) => btn.classList.remove("active"));
-    const selected = document.querySelector(`[onclick="selectMaritalStatus('${value}')"]`);
-    if (selected) selected.classList.add("active");
-    document.getElementById("maritalStatus").value = value;
-  };
-
-  // Paper Presented toggle
-  window.togglePaperPresented = function (value) {
-    const buttons = document.querySelectorAll('[onclick^="togglePaperPresented"]');
-    buttons.forEach((btn) => btn.classList.remove("active"));
-    const selected = document.querySelector(`[onclick="togglePaperPresented('${value}')"]`);
-    if (selected) selected.classList.add("active");
-    document.getElementById("paperPresented").value = value;
-  };
-
-  // Exam toggle (NET/SET/SLET/GATE)
-  window.toggleExam = function (exam, value) {
-    const yesBtn = document.querySelector(`[onclick="toggleExam('${exam}', 'yes')"]`);
-    const noBtn = document.querySelector(`[onclick="toggleExam('${exam}', 'no')"]`);
-    const yearInput = document.getElementById(`${exam}Year`);
-    const statusInput = document.getElementById(`${exam}Status`);
-
-    if (value === "yes") {
-      yearInput.disabled = false;
-      yesBtn.classList.add("active");
-      noBtn.classList.remove("active");
-    } else {
-      yearInput.disabled = true;
-      yearInput.value = "";
-      yesBtn.classList.remove("active");
-      noBtn.classList.add("active");
+// Function to calculate age from DOB
+function calculateAge() {
+  const dobInput = document.getElementById('dob');
+  const ageInput = document.getElementById('age');
+  if (dobInput.value) {
+    const birthDate = new Date(dobInput.value);
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDifference = today.getMonth() - birthDate.getMonth();
+    if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
     }
-    statusInput.value = value;
-  };
+    ageInput.value = age;
+  } else {
+    ageInput.value = '';
+  }
+}
 
-  // Work experience toggle
-  window.toggleWorkExperience = function (value) {
-    const experienceSection = document.getElementById("experienceFields");
-    const buttons = document.querySelectorAll(".work-exp-toggle .toggle-btn");
+// Attach the calculateAge function to the dob input's change event
+document.addEventListener('DOMContentLoaded', () => {
+  const dobInput = document.getElementById('dob');
+  if (dobInput) {
+    dobInput.addEventListener('change', calculateAge);
+  }
 
-    buttons.forEach((btn) => btn.classList.remove("active"));
-    const selected = document.querySelector(`[onclick="toggleWorkExperience('${value}')"]`);
-    if (selected) selected.classList.add("active");
+  // Initial setup for gender, marital status, NET/SET, and work experience toggles
+  selectGender('male'); // Default to Male or your preferred default
+  selectMaritalStatus('unmarried'); // Default to Unmarried or your preferred default
+  toggleExam('net', 'yes'); // Default to Yes
+  toggleExam('set', 'yes'); // Default to Yes
+  workExperience('experience'); // Default to 'Experience'
+});
 
-    experienceSection.style.display = value === "experience" ? "block" : "none";
-  };
 
-  // Ph.D. section logic
-  window.updatePhdFields = function () {
+// Functions for toggle buttons (Gender, Marital Status, NET/SET, Work Experience)
+function selectGender(gender) {
+  document.getElementById('gender').value = gender;
+  // Use a more specific selector to avoid interfering with other button groups
+  document.querySelectorAll('.gender-toggle-group .toggle-btn').forEach(button => {
+    if (button.dataset.value === gender) {
+      button.classList.add('active');
+    } else {
+      button.classList.remove('active');
+    }
+  });
+}
+
+function selectMaritalStatus(status) {
+  document.getElementById('maritalStatus').value = status;
+  // Use a more specific selector
+  document.querySelectorAll('.marital-status-toggle-group .toggle-btn').forEach(button => {
+    if (button.dataset.value === status) {
+      button.classList.add('active');
+    } else {
+      button.classList.remove('active');
+    }
+  });
+}
+
+function toggleExam(examType, status) {
+  const statusInput = document.getElementById(`${examType}Status`);
+  const yearInput = document.getElementById(`${examType}Year`);
+
+  // Update hidden input value
+  statusInput.value = status;
+
+  // Update button active state
+  document.querySelectorAll(`.${examType}-toggle-group .toggle-btn`).forEach(button => {
+    if (button.dataset.value === status) {
+      button.classList.add('active');
+    } else {
+      button.classList.remove('active');
+    }
+  });
+
+  // Show/hide and set required for year input
+  if (status === 'yes') {
+    yearInput.style.display = 'inline-block';
+    yearInput.setAttribute('required', 'true');
+  } else {
+    yearInput.style.display = 'none';
+    yearInput.removeAttribute('required');
+    yearInput.value = ''; // Clear the year if "No" is selected
+  }
+}
+
+function workExperience(type) {
+  const experienceContainer = document.getElementById('experienceContainer');
+  const addExperienceSection = document.querySelector('.add-experience-section');
+  const toggleButtons = document.querySelectorAll('.work-exp-toggle button');
+
+  toggleButtons.forEach(button => {
+    button.classList.remove('active');
+  });
+
+  const selectedButton = document.querySelector(`.work-exp-toggle button[data-value="${type}"]`);
+  if (selectedButton) {
+    selectedButton.classList.add('active');
+  }
+
+  const experienceFields = document.querySelectorAll('#experienceContainer input, #experienceContainer select');
+
+  if (type === 'experience') {
+    experienceContainer.style.display = 'block';
+    addExperienceSection.style.display = 'block';
+    experienceFields.forEach(field => {
+      field.setAttribute('required', 'true');
+    });
+    // Ensure at least one experience item exists if it was somehow removed
+    if (experienceContainer.children.length === 0) {
+      addExperience(); // Add a default one if none exist
+    }
+  } else { // type === 'fresher'
+    experienceContainer.style.display = 'none';
+    addExperienceSection.style.display = 'none';
+    experienceFields.forEach(field => {
+      field.removeAttribute('required');
+      field.value = ''; // Clear values when switching to Fresher
+      if (field.type === 'checkbox') field.checked = false; // Uncheck checkboxes
+    });
+  }
+  // Ensure remove buttons are updated
+  updateRemoveButtons('experience');
+}
+
+// Functions for adding/removing dynamic sections
+let qualificationIndex = 0;
+function addQualification() {
+  qualificationIndex++;
+  const container = document.getElementById('qualificationsContainer');
+  const newQualification = document.createElement('div');
+  newQualification.classList.add('qualification-item');
+  newQualification.dataset.index = qualificationIndex;
+  newQualification.innerHTML = `
+        <div class="form-row">
+            <div class="form-field">
+                <label>Degree<span class="required">*</span></label>
+                <select class="degree-select" required>
+                    <option value="">Select degree</option>
+                    <option value="phd">Ph.D</option>
+                    <option value="masters">Master's</option>
+                    <option value="bachelors">Bachelor's</option>
+                    <option value="diploma">Diploma</option>
+                    <option value="certificate">Certificate</option>
+                </select>
+                <div class="error-message" style="display: none">Degree is required</div>
+            </div>
+            <div class="form-field">
+                <label>Degree Name</label>
+                <input type="text" class="degree-name" placeholder="Enter degree name" required/>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-field">
+                <label>Education Mode<span class="required">*</span></label>
+                <select class="education-mode" required>
+                    <option value="">Select mode</option>
+                    <option value="regular">Regular</option>
+                    <option value="distance">Distance</option>
+                    <option value="online">Online</option>
+                    <option value="correspondence">Correspondence</option>
+                </select>
+                <div class="error-message" style="display: none">Education mode is required</div>
+            </div>
+            <div class="form-field">
+                <label>University Name<span class="required">*</span></label>
+                <input type="text" class="university-name" placeholder="Enter university name" required/>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-field">
+                <label>Specialization</label>
+                <input type="text" class="specialization" placeholder="Enter specialization"/>
+            </div>
+            <div class="form-field">
+                <label>Year of Passing<span class="required">*</span></label>
+                <input type="date" class="qualification-year-of-passing" required/>
+            </div>
+            <div class="form-field">
+                <label>Percentage</label>
+                <input type="tel" class="percentage" placeholder="Enter Percentage"/>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-field">
+                <label>CGPA</label>
+                <input type="text" class="cgpa" placeholder="Enter CGPA"/>
+            </div>
+            <div class="form-field remove-btn-container">
+                <button type="button" class="remove-qualification-btn" onclick="removeQualification(${qualificationIndex})">✕ Remove</button>
+            </div>
+        </div>
+    `;
+  container.appendChild(newQualification);
+  updateRemoveButtons('qualification');
+}
+
+function removeQualification(index) {
+  const item = document.querySelector(`.qualification-item[data-index="${index}"]`);
+  if (item) {
+    item.remove();
+    updateRemoveButtons('qualification');
+  }
+}
+
+let experienceIndex = 0;
+function addExperience() {
+  experienceIndex++;
+  const container = document.getElementById('experienceContainer');
+  const newExperience = document.createElement('div');
+  newExperience.classList.add('experience-item');
+  newExperience.dataset.index = experienceIndex;
+  newExperience.innerHTML = `
+        <div class="form-row">
+            <div class="form-field">
+                <label>Organization / University<span class="required">*</span></label>
+                <input type="text" class="experience-organization" placeholder="Enter Organization / University" required/>
+            </div>
+            <div class="form-field">
+                <label>Designation/Post held<span class="required">*</span></label>
+                <input type="text" class="experience-designation" placeholder="Enter Designation/Post held" required/>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-field">
+                <label>From Date<span class="required">*</span></label>
+                <input type="date" class="experience-from" required/>
+            </div>
+            <div class="form-field">
+                <label>To Date<span class="required">*</span></label>
+                <input type="date" class="experience-to" required/>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-field">
+                <label>Current Salary (Gross per month)</label>
+                <input type="text" class="experience-salary" placeholder="Enter Current Salary"/>
+            </div>
+            <div class="form-field checkbox-field">
+                <input type="checkbox" class="experience-current-role"/>
+                <label>I am currently working in this role</label>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-field remove-btn-container">
+                <button type="button" class="remove-experience-btn" onclick="removeExperience(this)">✕ Remove</button>
+            </div>
+        </div>
+    `;
+  container.appendChild(newExperience);
+  updateRemoveButtons('experience');
+}
+
+function removeExperience(button) {
+  const item = button.closest('.experience-item');
+  if (item) {
+    item.remove();
+    updateRemoveButtons('experience');
+  }
+}
+
+let researchPaperIndex = 0;
+function addResearchPaper() {
+  researchPaperIndex++;
+  const container = document.getElementById('researchPapersContainer');
+  const newResearchPaper = document.createElement('div');
+  newResearchPaper.classList.add('research-paper-item');
+  newResearchPaper.dataset.index = researchPaperIndex;
+  newResearchPaper.innerHTML = `
+        <div class="form-row">
+            <div class="form-field">
+                <label>Scopus Indexed Publications</label>
+                <input type="text" class="scopus-publications" placeholder="Enter number of publications"/>
+            </div>
+            <div class="form-field">
+                <label>Scopus ID</label>
+                <input type="text" class="scopus-id" placeholder="Enter Scopus ID"/>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-field">
+                <label>Presented in Conference</label>
+                <select class="conference-select">
+                    <option value="">Select</option>
+                    <option value="yes">Yes</option>
+                    <option value="no">No</option>
+                </select>
+            </div>
+            <div class="form-field">
+                <label>Title Of The Paper</label>
+                <input type="text" class="paper-title" placeholder="Enter journal title"/>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-field">
+                <label>Name of Journal</label>
+                <input type="text" class="journal-name" placeholder="Enter journal name"/>
+            </div>
+            <div class="form-field">
+                <label>Year of Publication</label>
+                <input type="date" class="publication-year"/>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-field">
+                <label>Number of Approved Papers</label>
+                <input type="number" class="approved-papers" placeholder="Enter number of approved papers"/>
+            </div>
+            <div class="form-field remove-btn-container">
+                <button type="button" class="remove-research-paper-btn" onclick="removeResearchPaper(${researchPaperIndex})">✕ Remove</button>
+            </div>
+        </div>
+    `;
+  container.appendChild(newResearchPaper);
+  updateRemoveButtons('research-paper');
+}
+
+function removeResearchPaper(index) {
+  const item = document.querySelector(`.research-paper-item[data-index="${index}"]`);
+  if (item) {
+    item.remove();
+    updateRemoveButtons('research-paper');
+  }
+}
+
+// Function to control visibility of remove buttons
+function updateRemoveButtons(type) {
+  let items;
+  let removeButtonClass;
+  if (type === 'qualification') {
+    items = document.querySelectorAll('.qualification-item');
+    removeButtonClass = '.remove-qualification-btn';
+  } else if (type === 'experience') {
+    items = document.querySelectorAll('.experience-item');
+    removeButtonClass = '.remove-experience-btn';
+  } else if (type === 'research-paper') {
+    items = document.querySelectorAll('.research-paper-item');
+    removeButtonClass = '.remove-research-paper-btn';
+  }
+
+  items.forEach((item, index) => {
+    const removeBtn = item.querySelector(removeButtonClass);
+    if (removeBtn) {
+      if (items.length > 1) {
+        removeBtn.style.display = 'block';
+      } else {
+        removeBtn.style.display = 'none';
+      }
+    }
+  });
+}
+
+// Ph.D. fields update
+function updatePhdFields() {
     const status = document.getElementById("phdStatus").value;
     const university = document.getElementById("phdUniversity");
     const year = document.getElementById("phdYear");
@@ -80,264 +371,258 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
       university.disabled = false;
       year.disabled = false;
-    }
+    
   };
+}
 
-  // Resume upload feedback
-  window.handleFileUpload = function (input) {
-    const file = input.files[0];
-    const errorText = document.getElementById("fileError");
-    const uploadText = document.getElementById("uploadText");
+// Resume Upload
+function handleFileUpload(input) {
+  const uploadText = document.getElementById('uploadText');
+  const fileError = document.getElementById('fileError');
+  const file = input.files[0];
 
-    if (file) {
-      if (file.size > 5 * 1024 * 1024) {
-        errorText.style.display = "block";
-        errorText.textContent = "File size exceeds 5MB.";
-        input.value = "";
-        uploadText.textContent = "BROWSE RESUME";
-      } else if (!file.name.endsWith(".pdf")) {
-        errorText.style.display = "block";
-        errorText.textContent = "Only PDF files are allowed.";
-        input.value = "";
-        uploadText.textContent = "BROWSE RESUME";
-      } else {
-        errorText.style.display = "none";
-        uploadText.textContent = file.name;
-      }
+  if (file) {
+    // Check file type
+    if (file.type !== 'application/pdf') {
+      fileError.textContent = 'Please upload a PDF file.';
+      fileError.style.display = 'block';
+      input.value = ''; // Clear the selected file
+      uploadText.textContent = 'Upload RESUME';
+      return;
     }
-  };
 
-  // Age auto-calculation
-  document.getElementById("dob").addEventListener("change", function () {
-    const dob = new Date(this.value);
-    const today = new Date();
-    let age = today.getFullYear() - dob.getFullYear();
-    const m = today.getMonth() - dob.getMonth();
-    if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
-      age--;
+    // Check file size (5MB limit)
+    const maxSize = 5 * 1024 * 1024; // 5 MB in bytes
+    if (file.size > maxSize) {
+      fileError.textContent = 'File size exceeds 5MB. Please upload a smaller PDF.';
+      fileError.style.display = 'block';
+      input.value = ''; // Clear the selected file
+      uploadText.textContent = 'Upload RESUME';
+      return;
     }
-    document.getElementById("age").value = age > 0 ? age : "";
-  });
 
-  // Initial toggle setup (prevent broken state on load)
-  updatePhdFields();
-  ["net", "set", "slet", "gate"].forEach((exam) => {
-    const status = document.getElementById(`${exam}Status`).value;
-    toggleExam(exam, status);
-  });
-  toggleWorkExperience("experience");
-});
+    uploadText.textContent = `File Selected: ${file.name}`;
+    fileError.style.display = 'none';
+  } else {
+    uploadText.textContent = 'Upload RESUME';
+    fileError.style.display = 'none';
+  }
+}
 
+// Populate Indian States (simple example, you might fetch this from an API)
 const indianStates = [
   "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh",
-  "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jharkhand",
-  "Karnataka", "Kerala", "Madhya Pradesh", "Maharashtra", "Manipur",
-  "Meghalaya", "Mizoram", "Nagaland", "Odisha", "Punjab",
-  "Rajasthan", "Sikkim", "Tamil Nadu", "Telangana", "Tripura",
-  "Uttar Pradesh", "Uttarakhand", "West Bengal",
-  "Andaman and Nicobar Islands", "Chandigarh", "Dadra and Nagar Haveli and Daman and Diu",
-  "Delhi", "Jammu and Kashmir", "Ladakh", "Lakshadweep", "Puducherry"
+  "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jharkhand", "Karnataka",
+  "Kerala", "Madhya Pradesh", "Maharashtra", "Manipur", "Meghalaya", "Mizoram",
+  "Nagaland", "Odisha", "Punjab", "Rajasthan", "Sikkim", "Tamil Nadu",
+  "Telangana", "Tripura", "Uttar Pradesh", "Uttarakhand", "West Bengal"
 ];
 
-const stateSelect = document.getElementById("state");
-indianStates.forEach((state) => {
-  const option = document.createElement("option");
-  option.value = state;
-  option.textContent = state;
-  stateSelect.appendChild(option);
+document.addEventListener('DOMContentLoaded', () => {
+  const stateSelect = document.getElementById('state');
+  if (stateSelect) {
+    indianStates.forEach(state => {
+      const option = document.createElement('option');
+      option.value = state;
+      option.textContent = state;
+      stateSelect.appendChild(option);
+    });
+  }
+
+  // Initial update for all dynamic sections on page load
+  updateRemoveButtons('qualification');
+  updateRemoveButtons('experience');
+  updateRemoveButtons('research-paper');
+  updatePhdFields(); // Call on page load to set initial state
 });
 
- function addQualification() {
-    const container = document.getElementById("qualificationsContainer");
-    const items = container.querySelectorAll(".qualification-item");
-    const newIndex = items.length;
+// --- Submission Logic ---
 
-    // Clone the first item
-    const newItem = items[0].cloneNode(true);
+document.getElementById('applicationForm').addEventListener('submit', async function(event) {
+  event.preventDefault(); // Prevent default form submission
 
-    // Clear all input fields in the clone
-    newItem.querySelectorAll("input, select").forEach((el) => {
-      if (el.tagName.toLowerCase() === "select") {
-        el.selectedIndex = 0;
-      } else {
-        el.value = "";
-      }
+  // Basic validation
+  const declarationCheckbox = document.getElementById('declaration');
+  if (!declarationCheckbox.checked) {
+    alert('Please agree to the declaration before submitting.');
+    return;
+  }
+
+  const formData = new FormData();
+
+  // --- Collect data from various sections ---
+
+  // Post Applied For
+  formData.append('postApplied', document.getElementById('postApplied').value);
+
+  // Personal Information
+  formData.append('title', document.getElementById('personalInfoTitle').value); // Unique ID
+  formData.append('firstName', document.getElementById('firstName').value);
+  formData.append('middleName', document.getElementById('middleName').value);
+  formData.append('lastName', document.getElementById('lastName').value);
+  formData.append('dob', document.getElementById('dob').value);
+  formData.append('age', document.getElementById('age').value);
+  formData.append('gender', document.getElementById('gender').value);
+  formData.append('maritalStatus', document.getElementById('maritalStatus').value);
+  formData.append('email', document.getElementById('email').value);
+  formData.append('altEmail', document.getElementById('altEmail').value);
+  formData.append('caste', document.getElementById('caste').value);
+  formData.append('aadhar', document.getElementById('aadhar').value);
+  formData.append('pan', document.getElementById('pan').value);
+  formData.append('state', document.getElementById('state').value);
+  formData.append('city', document.getElementById('city').value);
+  formData.append('address', document.getElementById('address').value); // Corrected ID
+  formData.append('pinCode', document.getElementById('pinCode').value);
+  formData.append('mobile', document.getElementById('mobile').value);
+  formData.append('altMobile', document.getElementById('altMobile').value);
+  formData.append('institute', document.getElementById('institute').value);
+
+  // Qualifications (collect as an array of objects)
+  const qualifications = [];
+  document.querySelectorAll('.qualification-item').forEach(item => {
+    const degree = item.querySelector('.degree-select').value;
+    const degreeName = item.querySelector('.degree-name').value;
+    const educationMode = item.querySelector('.education-mode').value;
+    const universityName = item.querySelector('.university-name').value;
+    const specialization = item.querySelector('.specialization').value;
+    const yearOfPassing = item.querySelector('.qualification-year-of-passing').value; // Corrected class
+    const percentage = item.querySelector('.percentage').value;
+    const cgpa = item.querySelector('.cgpa').value;
+
+    qualifications.push({
+      degree,
+      degreeName,
+      educationMode,
+      universityName,
+      specialization,
+      yearOfPassing,
+      percentage,
+      cgpa
     });
-
-    // Update data-index and button onclick
-    newItem.setAttribute("data-index", newIndex);
-    newItem.querySelector(".remove-qualification-btn").setAttribute(
-      "onclick",
-      `removeQualification(${newIndex})`
-    );
-
-    container.appendChild(newItem);
-
-    updateRemoveButtons();
-  }
-
-  function removeQualification(index) {
-    const container = document.getElementById("qualificationsContainer");
-    const items = container.querySelectorAll(".qualification-item");
-
-    if (items.length > 1) {
-      items[index].remove();
-
-      // Re-index all remaining items
-      const updatedItems = container.querySelectorAll(".qualification-item");
-      updatedItems.forEach((item, idx) => {
-        item.setAttribute("data-index", idx);
-        item.querySelector(".remove-qualification-btn").setAttribute(
-          "onclick",
-          `removeQualification(${idx})`
-        );
-      });
-
-      updateRemoveButtons();
-    }
-  }
-
-  function updateRemoveButtons() {
-    const items = document.querySelectorAll(".qualification-item");
-    items.forEach((item, index) => {
-      const removeBtn = item.querySelector(".remove-qualification-btn");
-      if (items.length === 1) {
-        removeBtn.style.display = "none";
-      } else {
-        removeBtn.style.display = "block";
-      }
-    });
-  }
-
-  // Initial call on page load (optional)
-  window.onload = function () {
-    updateRemoveButtons();
-  };
-
-
-  function addResearchPaper() {
-    const container = document.getElementById("researchPapersContainer");
-    const items = container.querySelectorAll(".research-paper-item");
-    const newIndex = items.length;
-
-    // Clone the first item
-    const newItem = items[0].cloneNode(true);
-
-    // Clear all input and select fields in the clone
-    newItem.querySelectorAll("input, select").forEach((el) => {
-      if (el.tagName.toLowerCase() === "select") {
-        el.selectedIndex = 0;
-      } else {
-        el.value = "";
-      }
-    });
-
-    // Update data-index and remove button's onclick
-    newItem.setAttribute("data-index", newIndex);
-    newItem.querySelector(".remove-research-paper-btn").setAttribute(
-      "onclick",
-      `removeResearchPaper(${newIndex})`
-    );
-
-    container.appendChild(newItem);
-
-    updateResearchPaperRemoveButtons();
-  }
-
-  function removeResearchPaper(index) {
-    const container = document.getElementById("researchPapersContainer");
-    const items = container.querySelectorAll(".research-paper-item");
-
-    if (items.length > 1) {
-      items[index].remove();
-
-      // Re-index remaining items and update their remove buttons
-      const updatedItems = container.querySelectorAll(".research-paper-item");
-      updatedItems.forEach((item, idx) => {
-        item.setAttribute("data-index", idx);
-        item.querySelector(".remove-research-paper-btn").setAttribute(
-          "onclick",
-          `removeResearchPaper(${idx})`
-        );
-      });
-
-      updateResearchPaperRemoveButtons();
-    }
-  }
-
-  function updateResearchPaperRemoveButtons() {
-    const items = document.querySelectorAll(".research-paper-item");
-    items.forEach((item) => {
-      const removeBtn = item.querySelector(".remove-research-paper-btn");
-      removeBtn.style.display = items.length > 1 ? "block" : "none";
-    });
-  }
-
-  // On page load
-  window.onload = function () {
-    updateResearchPaperRemoveButtons();
-  };
-
-function addExperience() {
-  const container = document.getElementById("experienceContainer");
-  const items = container.querySelectorAll(".experience-item");
-  const newIndex = items.length;
-
-  const newItem = items[0].cloneNode(true);
-  newItem.setAttribute("data-index", newIndex);
-
-  // Clear inputs
-  newItem.querySelectorAll("input").forEach(input => {
-    if (input.type === "checkbox") input.checked = false;
-    else input.value = "";
   });
+  formData.append('qualifications', JSON.stringify(qualifications)); // Send as JSON string
 
-  // Show remove button
-  const removeBtn = newItem.querySelector(".remove-experience-btn");
-  removeBtn.style.display = "inline-block";
-  removeBtn.onclick = () => newItem.remove();
+  // Ph.D.
+  formData.append('phdStatus', document.getElementById('phdStatus').value);
+  formData.append('phdUniversity', document.getElementById('phdUniversity').value);
+  formData.append('phdYear', document.getElementById('phdYear').value);
 
-  container.appendChild(newItem);
-}
-
-function removeExperience(btn) {
-  const container = document.getElementById("experienceContainer");
-  const allItems = container.querySelectorAll(".experience-item");
-  if (allItems.length > 1) {
-    btn.closest(".experience-item").remove();
-  } else {
-    alert("At least one work experience entry is required.");
+  // NET/SET Exams
+  formData.append('netStatus', document.getElementById('netStatus').value);
+  if (document.getElementById('netStatus').value === 'yes') {
+    formData.append('netYear', document.getElementById('netYear').value);
   }
-}
+  formData.append('setStatus', document.getElementById('setStatus').value);
+  if (document.getElementById('setStatus').value === 'yes') {
+    formData.append('setYear', document.getElementById('setYear').value);
+  }
 
-let experienceIndex = 0;
+  // Work Experience (collect as an array of objects)
+  const workExperiences = [];
+  const activeWorkExpButton = document.querySelector('.work-exp-toggle .active');
+  const workExpType = activeWorkExpButton ? activeWorkExpButton.dataset.value : 'fresher'; // Fallback to 'fresher'
 
-// Work experience toggle function
-function workExperience(value) {
-    const experienceSection = document.getElementById("experienceContainer");
-    const addExpSection = document.querySelector(".add-experience-section");
-    const buttons = document.querySelectorAll(".work-exp-toggle .toggle-btn");
+  formData.append('workExperienceType', workExpType);
 
-    if (value === "fresher") {
-        if (experienceSection) experienceSection.style.display = "none";
-        if (addExpSection) addExpSection.style.display = "none";
-        buttons.forEach(button => {
-            if (button.dataset.value === "fresher") {
-                button.classList.add("active");
-            } else {
-                button.classList.remove("active");
-            }
-        });
-    } else if (value === "experience") {
-        if (experienceSection) experienceSection.style.display = "block";
-        if (addExpSection) addExpSection.style.display = "block";
-        buttons.forEach(button => {
-            if (button.dataset.value === "experience") {
-                button.classList.add("active");
-            } else {
-                button.classList.remove("active");
-            }
-        });
+  if (workExpType === 'experience') {
+    document.querySelectorAll('.experience-item').forEach(item => {
+      const organization = item.querySelector('.experience-organization').value;
+      const designation = item.querySelector('.experience-designation').value;
+      const fromDate = item.querySelector('.experience-from').value;
+      const toDate = item.querySelector('.experience-to').value;
+      const salary = item.querySelector('.experience-salary').value;
+      const currentRole = item.querySelector('.experience-current-role').checked;
+
+      workExperiences.push({
+        organization,
+        designation,
+        fromDate,
+        toDate,
+        salary,
+        currentRole
+      });
+    });
+  }
+  formData.append('workExperiences', JSON.stringify(workExperiences)); // Send as JSON string
+
+  // Courses Taught (Unique IDs now)
+  formData.append('courseCollegeName', document.getElementById('courseCollegeName').value);
+  formData.append('courseClassName', document.getElementById('courseClassName').value);
+  formData.append('courseSubjectName', document.getElementById('courseSubjectName').value);
+  formData.append('courseYearsOfExp', document.getElementById('courseYearsOfExp').value);
+  formData.append('courseFromDate', document.getElementById('courseFromDate').value);
+  formData.append('courseToDate', document.getElementById('courseToDate').value);
+  formData.append('courseDepartmentType', document.getElementById('courseDepartmentType').value);
+  formData.append('courseTypeOfContract', document.getElementById('courseTypeOfContract').value);
+  formData.append('courseLastSalary', document.getElementById('courseLastSalary').value);
+  formData.append('courseApprovedByUni', document.getElementById('courseApprovedByUni').value);
+  formData.append('courseLetterNumber', document.getElementById('courseLetterNumber').value);
+  formData.append('courseLetterDate', document.getElementById('courseLetterDate').value);
+
+  // Research Papers (collect as an array of objects)
+  const researchPapers = [];
+  document.querySelectorAll('.research-paper-item').forEach(item => {
+    const scopusPublications = item.querySelector('.scopus-publications').value;
+    const scopusId = item.querySelector('.scopus-id').value;
+    const presentedInConference = item.querySelector('.conference-select').value;
+    const paperTitle = item.querySelector('.paper-title').value;
+    const journalName = item.querySelector('.journal-name').value;
+    const publicationYear = item.querySelector('.publication-year').value;
+    const approvedPapers = item.querySelector('.approved-papers').value;
+
+    researchPapers.push({
+      scopusPublications,
+      scopusId,
+      presentedInConference,
+      paperTitle,
+      journalName,
+      publicationYear,
+      approvedPapers
+    });
+  });
+  formData.append('researchPapers', JSON.stringify(researchPapers)); // Send as JSON string
+
+  // Awards (Unique IDs now)
+  formData.append('awardTitle', document.getElementById('awardTitle').value);
+  formData.append('awardOrganizationName', document.getElementById('awardOrganizationName').value);
+  formData.append('awardNature', document.getElementById('awardNature').value); // Corrected ID
+  formData.append('awardOrganizationRecognition', document.getElementById('awardOrganizationRecognition').value);
+
+  // Additional Information (Unique IDs now for referenceName)
+  formData.append('referenceName', document.getElementById('referenceName').value);
+  formData.append('appliedFor', document.getElementById('appliedFor').value);
+  formData.append('currentSalary', document.getElementById('currentSalary').value);
+  formData.append('expectedSalary', document.getElementById('expectedSalary').value);
+  formData.append('extraCurricular', document.getElementById('extraCurricular').value);
+
+  // Resume Upload
+  const resumeFile = document.getElementById('resumeUpload').files[0];
+  if (resumeFile) {
+    formData.append('resume', resumeFile);
+  }
+
+  // --- Send data to backend ---
+  const backendUrl = 'http://localhost:5000/api/apply'; // **IMPORTANT: Replace with your actual backend endpoint**
+
+  try {
+    const response = await fetch(backendUrl, {
+      method: 'POST',
+      body: formData // FormData will automatically set the Content-Type to multipart/form-data
+    });
+    console.log(response)
+    if (response.ok) {
+      const result = await response.json();
+      console.log('Submission successful:', result);
+      alert('Application submitted successfully!');
+      this.reset(); // Clear the form after successful submission
+      // Optionally, redirect the user or show a success message
+    } else {
+      const errorData = await response.json();
+      console.error('Submission failed:', response.status, errorData);
+      alert(`Submission failed: ${errorData.message || 'An error occurred.'}`);
     }
-}
-  
+  } catch (error) {
+    console.error('Error submitting form:', error);
+    alert('An unexpected error occurred. Please try again later.');
+  }
+});
