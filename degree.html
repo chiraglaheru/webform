@@ -5,9 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Application Form</title>
     <link rel="stylesheet" href="styles.css" />
+    <style>
+      /* Add styles for the export button */
+      .export-section {
+        margin: 20px 0;
+        text-align: center;
+      }
+      .export-btn {
+        background-color: #4CAF50;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+      }
+      .export-btn:hover {
+        background-color: #45a049;
+      }
+    </style>
   </head>
   <body>
     <div class="application-container">
+      <!-- Header -->
       <div class="header">
         <div class="university-info">
           <img src="./assets/lsrc.jpg" alt="College Logo" />
@@ -20,45 +40,45 @@
             <h2 class="form-title">APPLICATION FORM</h2>
           </div>
 
-          <div class="faculty-header">
-            </div>
+          <!-- Add Export Button at the top -->
+          <div class="export-section">
+            <button class="export-btn" onclick="exportToExcel()">Download Excel Report</button>
+          </div>
 
-          <form id="applicationForm" class="application-form">
+          <div class="faculty-header">
+            <!-- <p>Fields with <span class="required">*</span> are mandatory</p> -->
+          </div>
+
+        <!-- Ensure your form has these attributes -->
+<form id="applicationForm" method="POST" action="submit.degree.php" enctype="multipart/form-data">
+            <!-- Post Applied For -->
             <div class="form-group-container">
               <div class="section-header">Post Applied For</div>
               <div class="form-content">
                 <div class="form-row">
                   <div class="form-field">
-                    <label
-                      >Post Applied For<span class="required">*</span></label
-                    >
-                    <select id="postApplied" required>
+                    <label>Post Applied For<span class="required">*</span></label>
+                    <select id="postApplied" name="postApplied" required>
                       <option value="">Select Post Applied For</option>
                       <option value="professor">Professor</option>
                       <option value="Permanent">Director</option>
-
-                      <option value="associate-professor">
-                        Associate Professor
-                      </option>
-                      <option value="assistant-professor">
-                        Assistant Professor
-                      </option>
-                      <option value="professor-of-practice">
-                        Professor of Practice
-                      </option>
+                      <option value="associate-professor">Associate Professor</option>
+                      <option value="assistant-professor">Assistant Professor</option>
+                      <option value="professor-of-practice">Professor of Practice</option>
                     </select>
                   </div>
                 </div>
               </div>
             </div>
 
+            <!-- Personal Information -->
             <div class="form-group-container">
               <div class="section-header">Personal Information</div>
               <div class="form-content">
                 <div class="form-row">
                   <div class="form-field">
                     <label>Title<span class="required">*</span></label>
-                    <select id="personalInfoTitle" required>
+                    <select id="title" name="title" required>
                       <option value="">Select</option>
                       <option value="dr">Dr.</option>
                       <option value="mr">Mr.</option>
@@ -68,144 +88,69 @@
                   </div>
                   <div class="form-field">
                     <label>First Name<span class="required">*</span></label>
-                    <input
-                      type="text"
-                      id="firstName"
-                      placeholder="First Name"
-                      required
-                    />
+                    <input type="text" id="firstName" name="firstName" placeholder="First Name" required />
                   </div>
                   <div class="form-field">
                     <label>Middle Name</label>
-                    <input
-                      type="text"
-                      id="middleName"
-                      placeholder="Middle Name"
-                    />
+                    <input type="text" id="middleName" name="middleName" placeholder="Middle Name" />
                   </div>
                   <div class="form-field">
                     <label>Last Name<span class="required">*</span></label>
-                    <input
-                      type="text"
-                      id="lastName"
-                      placeholder="Last Name"
-                      required
-                    />
+                    <input type="text" id="lastName" name="lastName" placeholder="Last Name" required />
                   </div>
                 </div>
 
                 <div class="form-row">
                   <div class="form-field">
                     <label>Date of Birth<span class="required">*</span></label>
-                    <input type="date" id="dob" required />
+                    <input type="date" id="dob" name="dob" required />
                   </div>
                   <div class="form-field">
                     <label>Age</label>
-                    <input type="number" id="age" readonly />
+                    <input type="number" id="age" name="age" readonly />
                   </div>
                   <div class="form-field">
                     <label>Gender<span class="required">*</span></label>
-                    <div class="button-group gender-toggle-group">
-                      <button
-                        type="button"
-                        class="toggle-btn"
-                        data-value="male"
-                        onclick="selectGender('male')"
-                      >
-                        Male
-                      </button>
-                      <button
-                        type="button"
-                        class="toggle-btn"
-                        data-value="female"
-                        onclick="selectGender('female')"
-                      >
-                        Female
-                      </button>
-                      <button
-                        type="button"
-                        class="toggle-btn"
-                        data-value="other"
-                        onclick="selectGender('other')"
-                      >
-                        Other
-                      </button>
+                    <div class="button-group">
+                      <button type="button" class="toggle-btn" data-value="male" onclick="selectGender('male')">Male</button>
+                      <button type="button" class="toggle-btn" data-value="female" onclick="selectGender('female')">Female</button>
+                      <button type="button" class="toggle-btn" data-value="other" onclick="selectGender('other')">Other</button>
                     </div>
-                    <input type="hidden" id="gender" required />
+                    <input type="hidden" id="gender" name="gender" required />
                   </div>
                   <div class="form-field">
                     <label>Marital Status<span class="required">*</span></label>
-                    <div class="button-group marital-status-toggle-group">
-                      <button
-                        type="button"
-                        class="toggle-btn"
-                        data-value="married"
-                        onclick="selectMaritalStatus('married')"
-                      >
-                        Married
-                      </button>
-                      <button
-                        type="button"
-                        class="toggle-btn"
-                        data-value="unmarried"
-                        onclick="selectMaritalStatus('unmarried')"
-                      >
-                        Unmarried
-                      </button>
+                    <div class="button-group">
+                      <button type="button" class="toggle-btn" data-value="married" onclick="selectMaritalStatus('married')">Married</button>
+                      <button type="button" class="toggle-btn" data-value="unmarried" onclick="selectMaritalStatus('unmarried')">Unmarried</button>
                     </div>
-                    <input type="hidden" id="maritalStatus" required />
+                    <input type="hidden" id="maritalStatus" name="maritalStatus" required />
                   </div>
                 </div>
 
                 <div class="form-row">
                   <div class="form-field">
                     <label>Email ID<span class="required">*</span></label>
-                    <input
-                      type="email"
-                      id="email"
-                      placeholder="Enter email ID"
-                      required
-                    />
+                    <input type="email" id="email" name="email" placeholder="Enter email ID" required />
                   </div>
                   <div class="form-field">
                     <label>Alternate Email ID</label>
-                    <input
-                      type="email"
-                      id="altEmail"
-                      placeholder="Enter alternate email ID"
-                    />
+                    <input type="email" id="altEmail" name="altEmail" placeholder="Enter alternate email ID" />
                   </div>
                 </div>
 
                 <div class="form-row">
                   <div class="form-field">
-                    <label
-                      >Caste/Sub-Caste<span class="required">*</span></label
-                    >
-                    <input
-                      type="text"
-                      id="caste"
-                      placeholder="Enter Caste/Sub-Caste"
-                      required
-                    />
+                    <label>Caste/Sub-Caste<span class="required">*</span></label>
+                    <input type="text" id="caste" name="caste" placeholder="Enter Caste/Sub-Caste" required />
                   </div>
                   <div class="form-field">
                     <label>Aadhar No <span class="required">*</span></label>
-                    <input
-                      type="tel"
-                      id="aadhar"
-                      placeholder="Enter Aadhar No "
-                      required
-                    />
+                    <input type="tel" id="aadhar" name="aadhar" placeholder="Enter Aadhar No" required />
                   </div>
                   <div class="form-field">
                     <label>Pan No<span class="required">*</span></label>
-                    <input
-                      type="text"
-                      id="pan"
-                      placeholder="Enter PAn NO"
-                      required
-                    />
+                    <input type="text" id="pan" name="pan" placeholder="Enter PAN NO" required />
                   </div>
                 </div>
 
@@ -215,36 +160,21 @@
                     <div class="form-row">
                       <div class="form-field">
                         <label>State<span class="required">*</span></label>
-                        <select id="state" required>
+                        <select id="state" name="state" required>
                           <option value="">Select State</option>
                         </select>
                       </div>
                       <div class="form-field">
                         <label>City<span class="required">*</span></label>
-                        <input
-                          type="text"
-                          id="city"
-                          placeholder="Enter City"
-                          required
-                        />
+                        <input type="text" id="city" name="city" placeholder="Enter City" required />
                       </div>
                       <div class="form-field">
                         <label>Address<span class="required">*</span></label>
-                        <input
-                          type="text"
-                          id="address"
-                          placeholder="Enter Address"
-                          required
-                        />
+                        <input type="text" id="address" name="address" placeholder="Enter Address" required />
                       </div>
                       <div class="form-field">
                         <label>PinCode<span class="required">*</span></label>
-                        <input
-                          type="tel"
-                          id="pinCode"
-                          placeholder="Enter PinCode"
-                          required
-                        />
+                        <input type="tel" id="pinCode" name="pinCode" placeholder="Enter PinCode" required />
                       </div>
                     </div>
                   </div>
@@ -254,20 +184,11 @@
                     <div class="form-row">
                       <div class="form-field">
                         <label>Mobile No.<span class="required">*</span></label>
-                        <input
-                          type="tel"
-                          id="mobile"
-                          placeholder="Mobile No"
-                          required
-                        />
+                        <input type="tel" id="mobile" name="mobile" placeholder="Mobile No" required />
                       </div>
                       <div class="form-field">
                         <label>Alternate Mobile No.</label>
-                        <input
-                          type="tel"
-                          id="altMobile"
-                          placeholder="Mobile No"
-                        />
+                        <input type="tel" id="altMobile" name="altMobile" placeholder="Mobile No" />
                       </div>
                     </div>
                   </div>
@@ -276,50 +197,27 @@
                 <div class="form-row">
                   <div class="form-field">
                     <label>Name of Institute applied to:</label>
-                    <select id="institute">
+                    <select id="institute" name="institute">
                       <option value="">-- Select --</option>
                       <option value="arts">Bachelor of Arts (B.A)</option>
-                      <option value="commerce">
-                        Bachelor of Commerce (B.COM)
-                      </option>
-                      <option value="commerce">
-                        Bachelor of Commerce Accounting & Finance (B.A.F)
-                      </option>
-                      <option value="commerce">
-                        Bachelor of Commerce Banking And Insurance (B.B.I)
-                      </option>
-                      <option value="commerce">
-                        Bachelor of Commerce Financial Markets (B.F.M)
-                      </option>
-                      <option value="commerce">
-                        Bachelor of Commerce Management Studies (B.M.S)
-                      </option>
-                      <option value="commerce">
-                        Bachelor of Science Information Technology (B.SC-IT)
-                      </option>
-                      <option value="commerce">
-                        Bachelor of Commerce Cost and Management Accounting
-                        (B.C.M.A.)
-                      </option>
-                      <option value="commerce">
-                        Bachelor of Commerce Digital Business (B.D.B.)
-                      </option>
-                      <option value="commerce">
-                        Bachelor of Arts In Mass Media And Communication
-                        (B.A.M.M.C)
-                      </option>
-                      <option value="commerce">
-                        Master Of Commerce (M.COM)
-                      </option>
-                      <option value="commerce">
-                        Master of Arts – Psychology with Clinical Specialization
-                      </option>
+                      <option value="commerce">Bachelor of Commerce (B.COM)</option>
+                      <option value="commerce">Bachelor of Commerce Accounting & Finance (B.A.F)</option>
+                      <option value="commerce">Bachelor of Commerce Banking And Insurance (B.B.I)</option>
+                      <option value="commerce">Bachelor of Commerce Financial Markets (B.F.M)</option>
+                      <option value="commerce">Bachelor of Commerce Management Studies (B.M.S)</option>
+                      <option value="commerce">Bachelor of Science Information Technology (B.SC-IT)</option>
+                      <option value="commerce">Bachelor of Commerce Cost and Management Accounting (B.C.M.A.)</option>
+                      <option value="commerce">Bachelor of Commerce Digital Business (B.D.B.)</option>
+                      <option value="commerce">Bachelor of Arts In Mass Media And Communication (B.A.M.M.C)</option>
+                      <option value="commerce">Master Of Commerce (M.COM)</option>
+                      <option value="commerce">Master of Arts – Psychology with Clinical Specialization</option>
                     </select>
                   </div>
                 </div>
               </div>
             </div>
 
+            <!-- Qualifications -->
             <div class="form-group-container">
               <div class="section-header">Qualifications</div>
               <div class="form-content">
@@ -328,7 +226,7 @@
                     <div class="form-row">
                       <div class="form-field">
                         <label>Degree<span class="required">*</span></label>
-                        <select class="degree-select" required>
+                        <select class="degree-select" name="degree[]" required>
                           <option value="">Select degree</option>
                           <option value="phd">Ph.D</option>
                           <option value="masters">Master's</option>
@@ -336,122 +234,73 @@
                           <option value="diploma">Diploma</option>
                           <option value="certificate">Certificate</option>
                         </select>
-                        <div class="error-message" style="display: none">
-                          Degree is required
-                        </div>
+                        <div class="error-message" style="display: none">Degree is required</div>
                       </div>
                       <div class="form-field">
                         <label>Degree Name</label>
-                        <input
-                          type="text"
-                          class="degree-name"
-                          placeholder="Enter degree name"
-                          required
-                        />
+                        <input type="text" class="degree-name" name="degree_name[]" placeholder="Enter degree name" required />
                       </div>
                     </div>
 
                     <div class="form-row">
                       <div class="form-field">
-                        <label
-                          >Education Mode<span class="required">*</span></label
-                        >
-                        <select class="education-mode" required>
+                        <label>Education Mode<span class="required">*</span></label>
+                        <select class="education-mode" name="education_mode[]" required>
                           <option value="">Select mode</option>
                           <option value="regular">Regular</option>
                           <option value="distance">Distance</option>
                           <option value="online">Online</option>
                           <option value="correspondence">Correspondence</option>
                         </select>
-                        <div class="error-message" style="display: none">
-                          Education mode is required
-                        </div>
+                        <div class="error-message" style="display: none">Education mode is required</div>
                       </div>
                       <div class="form-field">
-                        <label
-                          >University Name<span class="required">*</span></label
-                        >
-                        <input
-                          type="text"
-                          class="university-name"
-                          placeholder="Enter university name"
-                          required
-                        />
+                        <label>University Name<span class="required">*</span></label>
+                        <input type="text" class="university-name" name="university_name[]" placeholder="Enter university name" required />
                       </div>
                     </div>
 
                     <div class="form-row">
                       <div class="form-field">
                         <label>Specialization</label>
-                        <input
-                          type="text"
-                          class="specialization"
-                          placeholder="Enter specialization"
-                        />
+                        <input type="text" class="specialization" name="specialization[]" placeholder="Enter specialization" />
                       </div>
                       <div class="form-field">
-                        <label
-                          >Year of Passing<span class="required">*</span></label
-                        >
-
-                        <input type="date" class="qualification-year-of-passing" required />
+                        <label>Year of Passing<span class="required">*</span></label>
+                        <input type="date" class="year-passing" name="year_of_passing[]" required />
                       </div>
                       <div class="form-field">
                         <label>Percentage</label>
-                        <input
-                          type="tel"
-                          class="percentage"
-                          placeholder="Enter Percentage"
-                        />
+                        <input type="number" step="0.01" class="percentage" name="percentage[]" placeholder="Enter Percentage" />
                       </div>
                     </div>
 
                     <div class="form-row">
                       <div class="form-field">
                         <label>CGPA</label>
-                        <input
-                          type="text"
-                          class="cgpa"
-                          placeholder="Enter CGPA"
-                        />
+                        <input type="number" step="0.1" class="cgpa" name="cgpa[]" placeholder="Enter CGPA" />
                       </div>
                       <div class="form-field remove-btn-container">
-                        <button
-                          type="button"
-                          class="remove-qualification-btn"
-                          onclick="removeQualification(0)"
-                          style="display: none"
-                        >
-                          ✕ Remove
-                        </button>
+                        <button type="button" class="remove-qualification-btn" onclick="removeQualification(0)" style="display: none">✕ Remove</button>
                       </div>
                     </div>
                   </div>
                 </div>
 
                 <div class="add-qualification-section">
-                  <button
-                    type="button"
-                    class="add-qualification-btn"
-                    onclick="addQualification()"
-                  >
-                    + Add Qualification
-                  </button>
+                  <button type="button" class="add-qualification-btn" onclick="addQualification()">+ Add Qualification</button>
                 </div>
               </div>
             </div>
 
+            <!-- Ph.D. Section -->
             <div class="form-group-container">
               <div class="section-header">Ph.D.</div>
               <div class="form-content">
                 <div class="form-row">
                   <div class="form-field">
                     <label>Status<span class="required">*</span></label>
-                    <select
-                      id="phdStatus"
-                      onchange="updatePhdFields()"
-                      required
-                    >
+                    <select id="phdStatus" name="phdStatus" onchange="updatePhdFields()" required>
                       <option value="">Select</option>
                       <option value="completed">Completed</option>
                       <option value="pursuing">Pursuing</option>
@@ -460,251 +309,129 @@
                     </select>
                   </div>
                   <div class="form-field">
-                    <label
-                      >University / Institute<span class="required"
-                        >*</span
-                      ></label
-                    >
-                    <input
-                      type="text"
-                      id="phdUniversity"
-                      placeholder="Enter University / Institute"
-                    />
+                    <label>University / Institute<span class="required">*</span></label>
+                    <input type="text" id="phdUniversity" name="phdUniversity" placeholder="Enter University / Institute" />
                   </div>
                   <div class="form-field">
-                    <label
-                      >Year of Passing<span class="required">*</span></label
-                    >
-                    <input
-                      type="text"
-                      id="phdYear"
-                      placeholder="Enter Year of Passing"
-                    />
+                    <label>Year of Passing<span class="required">*</span></label>
+                    <input type="text" id="phdYear" name="phdYear" placeholder="Enter Year of Passing" />
                   </div>
                 </div>
               </div>
             </div>
 
+            <!-- exam section -->
             <div class="form-group-container">
               <div class="form-content">
                 <div class="exam-section">
                   <div class="exam-group">
                     <span class="exam-label">NET</span>
-                    <div class="button-group net-toggle-group">
-                      <button
-                        type="button"
-                        class="toggle-btn"
-                        data-value="yes"
-                        onclick="toggleExam('net', 'yes')"
-                      >
-                        Yes
-                      </button>
-                      <button
-                        type="button"
-                        class="toggle-btn"
-                        data-value="no"
-                        onclick="toggleExam('net', 'no')"
-                      >
-                        No
-                      </button>
+                    <div class="button-group">
+                      <button type="button" class="toggle-btn active" onclick="toggleExam('net', 'yes')">Yes</button>
+                      <button type="button" class="toggle-btn" onclick="toggleExam('net', 'no')">No</button>
                     </div>
-                    <input
-                      type="text"
-                      id="netYear"
-                      placeholder="Enter Year"
-                      class="year-input"
-                    />
-                    <input type="hidden" id="netStatus" />
+                    <input type="text" id="netYear" name="netYear" placeholder="Enter Year" class="year-input" />
+                    <input type="hidden" id="netStatus" name="netStatus" value="yes" />
                   </div>
 
                   <div class="exam-group">
                     <span class="exam-label">SET</span>
-                    <div class="button-group set-toggle-group">
-                      <button
-                        type="button"
-                        class="toggle-btn"
-                        data-value="yes"
-                        onclick="toggleExam('set', 'yes')"
-                      >
-                        Yes
-                      </button>
-                      <button
-                        type="button"
-                        class="toggle-btn"
-                        data-value="no"
-                        onclick="toggleExam('set', 'no')"
-                      >
-                        No
-                      </button>
+                    <div class="button-group">
+                      <button type="button" class="toggle-btn active" onclick="toggleExam('set', 'yes')">Yes</button>
+                      <button type="button" class="toggle-btn" onclick="toggleExam('set', 'no')">No</button>
                     </div>
-                    <input
-                      type="text"
-                      id="setYear"
-                      placeholder="Enter Year"
-                      class="year-input"
-                    />
-                    <input type="hidden" id="setStatus" />
+                    <input type="text" id="setYear" name="setYear" placeholder="Enter Year" class="year-input" />
+                    <input type="hidden" id="setStatus" name="setStatus" value="yes" />
                   </div>
                 </div>
               </div>
             </div>
 
+            <!-- Work Experience -->
             <div class="form-group-container">
               <div class="section-header">Work Experience</div>
               <div class="form-content">
-                <div class="button-group work-exp-toggle">
-                  <button
-                    type="button"
-                    class="toggle-btn"
-                    data-value="experience"
-                    onclick="workExperience('experience')"
-                  >
-                    Experience
-                  </button>
-                  <button
-                    type="button"
-                    class="toggle-btn"
-                    data-value="fresher"
-                    onclick="workExperience('fresher')"
-                  >
-                    Fresher
-                  </button>
-                </div>
-
                 <div id="experienceContainer">
                   <div class="experience-item" data-index="0">
                     <div class="form-row">
                       <div class="form-field">
-                        <label
-                          >Organization / University<span class="required"
-                            >*</span
-                          ></label
-                        >
-                        <input
-                          type="text"
-                          class="experience-organization"
-                          placeholder="Enter Organization / University"
-                          required
-                        />
+                        <label>Organization / University<span class="required">*</span></label>
+                        <input type="text" class="experience-organization" name="organization[]" placeholder="Enter Organization / University" required />
                       </div>
                       <div class="form-field">
-                        <label
-                          >Designation/Post held<span class="required"
-                            >*</span
-                          ></label
-                        >
-                        <input
-                          type="text"
-                          class="experience-designation"
-                          placeholder="Enter Designation/Post held"
-                          required
-                        />
+                        <label>Designation/Post held<span class="required">*</span></label>
+                        <input type="text" class="experience-designation" name="designation[]" placeholder="Enter Designation/Post held" required />
                       </div>
                     </div>
 
                     <div class="form-row">
                       <div class="form-field">
                         <label>From Date<span class="required">*</span></label>
-                        <input type="date" class="experience-from" required />
+                        <input type="date" class="experience-from" name="from_date[]" required />
                       </div>
                       <div class="form-field">
                         <label>To Date<span class="required">*</span></label>
-                        <input type="date" class="experience-to" required />
+                        <input type="date" class="experience-to" name="to_date[]" required />
                       </div>
                     </div>
 
                     <div class="form-row">
                       <div class="form-field">
                         <label>Current Salary (Gross per month)</label>
-                        <input
-                          type="text"
-                          class="experience-salary"
-                          placeholder="Enter Current Salary"
-                        />
+                        <input type="text" class="experience-salary" name="salary[]" placeholder="Enter Current Salary" required />
                       </div>
                       <div class="form-field checkbox-field">
-                        <input
-                          type="checkbox"
-                          class="experience-current-role"
-                        />
+                        <input type="checkbox" class="experience-current-role" name="currently_working[]" />
                         <label>I am currently working in this role</label>
                       </div>
                     </div>
 
                     <div class="form-row">
                       <div class="form-field remove-btn-container">
-                        <button
-                          type="button"
-                          class="remove-experience-btn"
-                          onclick="removeExperience(this)"
-                          style="display: none"
-                        >
-                          ✕ Remove
-                        </button>
+                        <button type="button" class="remove-experience-btn" onclick="removeExperience(this)" style="display: none">✕ Remove</button>
                       </div>
                     </div>
                   </div>
                 </div>
 
                 <div class="add-experience-section">
-                  <button
-                    type="button"
-                    class="add-qualification-btn"
-                    onclick="addExperience()"
-                  >
-                    + Add Work Experience
-                  </button>
+                  <button type="button" class="add-qualification-btn" onclick="addExperience()">+ Add Work Experience</button>
                 </div>
               </div>
             </div>
 
+            <!-- Courses Taught -->
             <div class="form-group-container">
               <div class="section-header">Courses Taught</div>
               <div class="form-content">
                 <div class="form-row">
                   <div class="form-field">
-                    <label>College Name </label>
-                    <input
-                      type="text"
-                      id="courseCollegeName"
-                      placeholder="Enter College Name"
-                    />
+                    <label>College Name</label>
+                    <input type="text" id="collegeName" name="collegeName" placeholder="Enter College Name" />
                   </div>
                   <div class="form-field">
-                    <label>Class Name </label>
-                    <input
-                      type="text"
-                      id="courseClassName"
-                      placeholder="Enter Class Name"
-                    />
+                    <label>Class Name</label>
+                    <input type="text" id="className" name="className" placeholder="Enter Class Name" />
                   </div>
                   <div class="form-field">
-                    <label>Subject Name </label>
-                    <input
-                      type="text"
-                      id="courseSubjectName"
-                      placeholder="Enter Subject Name"
-                    />
+                    <label>Subject Name</label>
+                    <input type="text" id="subjectName" name="subjectName" placeholder="Enter Subject Name" />
                   </div>
                   <div class="form-field">
-                    <label>Years of Experience </label>
-                    <input
-                      type="tel"
-                      id="courseYearsOfExp"
-                      placeholder="Enter Years of Experience"
-                    />
+                    <label>Years of Experience</label>
+                    <input type="tel" id="yearsOfExp" name="yearsOfExp" placeholder="Enter Years of Experience" />
                   </div>
                   <div class="form-field">
                     <label>From Date</label>
-                    <input type="date" id="courseFromDate" />
+                    <input type="date" id="fromDateCourse" name="fromDateCourse" />
                   </div>
                   <div class="form-field">
                     <label>To Date</label>
-                    <input type="date" id="courseToDate" />
+                    <input type="date" id="toDateCourse" name="toDateCourse" />
                   </div>
                   <div class="form-field">
                     <label>Department Type</label>
-                    <select id="courseDepartmentType">
+                    <select id="departmentType" name="departmentType" required>
                       <option value="">Select Department Type</option>
                       <option value="degree">Degree</option>
                       <option value="junior">Junior</option>
@@ -712,7 +439,7 @@
                   </div>
                   <div class="form-field">
                     <label>Type of Contract</label>
-                    <select id="courseTypeOfContract">
+                    <select id="typeOfContract" name="typeOfContract" required>
                       <option value="">Select Type of Contract</option>
                       <option value="temporary">Temporary</option>
                       <option value="permanent">Permanent</option>
@@ -722,11 +449,11 @@
                   </div>
                   <div class="form-field">
                     <label>Last Salary</label>
-                    <input type="tel" id="courseLastSalary" />
+                    <input type="tel" id="lastSalary" name="lastSalary" />
                   </div>
                   <div class="form-field">
                     <label>Approved By University</label>
-                    <select id="courseApprovedByUni">
+                    <select id="approvedByUni" name="approvedByUni" required>
                       <option value="">Select</option>
                       <option value="yes">Yes</option>
                       <option value="no">No</option>
@@ -734,16 +461,17 @@
                   </div>
                   <div class="form-field">
                     <label>Letter Number</label>
-                    <input type="tel" id="courseLetterNumber" />
+                    <input type="tel" id="letterNumber" name="letterNumber" />
                   </div>
                   <div class="form-field">
                     <label>Letter Date</label>
-                    <input type="date" id="courseLetterDate" />
+                    <input type="date" id="letterDate" name="letterDate" />
                   </div>
                 </div>
               </div>
             </div>
 
+            <!-- Research Papers -->
             <div class="form-group-container">
               <div class="section-header">Research Publication</div>
               <div class="form-content">
@@ -752,26 +480,18 @@
                     <div class="form-row">
                       <div class="form-field">
                         <label>Scopus Indexed Publications</label>
-                        <input
-                          type="text"
-                          class="scopus-publications"
-                          placeholder="Enter number of publications"
-                        />
+                        <input type="text" class="scopus-publications" name="scopus_publications[]" placeholder="Enter number of publications" />
                       </div>
                       <div class="form-field">
                         <label>Scopus ID</label>
-                        <input
-                          type="text"
-                          class="scopus-id"
-                          placeholder="Enter Scopus ID"
-                        />
+                        <input type="text" class="scopus-id" name="scopus_id[]" placeholder="Enter Scopus ID" />
                       </div>
                     </div>
-
+            
                     <div class="form-row">
                       <div class="form-field">
                         <label>Presented in Conference</label>
-                        <select class="conference-select">
+                        <select class="conference-select" name="conference_presented[]">
                           <option value="">Select</option>
                           <option value="yes">Yes</option>
                           <option value="no">No</option>
@@ -779,206 +499,388 @@
                       </div>
                       <div class="form-field">
                         <label>Title Of The Paper</label>
-                        <input
-                          type="text"
-                          class="paper-title"
-                          placeholder="Enter journal title"
-                        />
+                        <input type="text" class="paper-title" name="paper_title[]" placeholder="Enter journal title" />
                       </div>
                     </div>
-
+            
                     <div class="form-row">
                       <div class="form-field">
                         <label>Name of Journal</label>
-                        <input
-                          type="text"
-                          class="journal-name"
-                          placeholder="Enter journal name"
-                        />
+                        <input type="text" class="journal-name" name="journal_name[]" placeholder="Enter journal name" />
                       </div>
                       <div class="form-field">
                         <label>Year of Publication</label>
-                        <input type="date" class="publication-year" />
+                        <input type="text" class="publication-year" name="year_of_publication[]" placeholder="YYYY" pattern="\d{4}" title="Please enter a 4-digit year" />
                       </div>
                     </div>
-
+            
                     <div class="form-row">
                       <div class="form-field">
                         <label>Number of Approved Papers</label>
-                        <input
-                          type="number"
-                          class="approved-papers"
-                          placeholder="Enter number of approved papers"
-                        />
+                        <input type="number" class="approved-papers" name="approved_papers[]" placeholder="Enter number of approved papers" min="0" />
                       </div>
                       <div class="form-field remove-btn-container">
-                        <button
-                          type="button"
-                          class="remove-research-paper-btn"
-                          onclick="removeResearchPaper(0)"
-                          style="display: none"
-                        >
-                          ✕ Remove
-                        </button>
+                        <button type="button" class="remove-research-paper-btn" onclick="removeResearchPaper(0)" style="display: none">✕ Remove</button>
                       </div>
                     </div>
                   </div>
                 </div>
-
+            
                 <div class="add-research-paper-section">
-                  <button
-                    type="button"
-                    class="add-research-paper-btn"
-                    onclick="addResearchPaper()"
-                  >
-                    + Add Research Paper
-                  </button>
+                  <button type="button" class="add-research-paper-btn" onclick="addResearchPaper()">+ Add Research Paper</button>
                 </div>
               </div>
             </div>
 
+            <!-- Awards -->
             <div class="form-group-container">
               <div class="section-header">Awards</div>
               <div class="form-content">
                 <div class="form-row">
                   <div class="form-field">
-                    <label>Title </label>
-                    <input
-                      type="text"
-                      id="awardTitle"
-                      placeholder="Enter Title"
-                    />
+                    <label>Title</label>
+                    <input type="text" id="awardTitle" name="awardTitle" placeholder="Enter Title" />
                   </div>
                   <div class="form-field">
-                    <label>Organization Name </label>
-                    <input
-                      type="text"
-                      id="awardOrganizationName"
-                      placeholder="Enter Organization Name"
-                    />
+                    <label>Organization Name</label>
+                    <input type="text" id="organizationName" name="organizationName" placeholder="Enter Organization Name" />
                   </div>
                   <div class="form-field">
-                    <label>Nature of Award </label>
-                    <input
-                      type="text"
-                      id="awardNature"
-                      placeholder="Enter Nature of Award"
-                    />
+                    <label>Nature of Award</label>
+                    <input type="text" id="natureOfAward" name="natureOfAward" placeholder="Enter Nature of Award" />
                   </div>
                   <div class="form-field">
-                    <label>Organization Recognition </label>
-                    <input
-                      type="text"
-                      id="awardOrganizationRecognition"
-                      placeholder="Enter Organization Recognition"
-                    />
+                    <label>Expected Award Salary</label>
+                    <input type="text" id="expectedAwardSalary" name="expectedAwardSalary" placeholder="Enter Expected Award Salary" />
                   </div>
                 </div>
               </div>
             </div>
 
+            <!-- Additional Information -->
             <div class="form-group-container">
               <div class="section-header">Additional Information</div>
               <div class="form-content">
                 <div class="form-row">
                   <div class="form-field">
-                    <label>Reference Name </label>
-                    <input
-                      type="text"
-                      id="referenceName"
-                      placeholder="Enter Reference Name"
-                    />
+                    <label>Refrence Name</label>
+                    <input type="text" id="referenceName" name="referenceName" placeholder="Enter Reference Name" />
                   </div>
                   <div class="form-field">
-                    <label>Applied For </label>
-                    <input
-                      type="text"
-                      id="appliedFor"
-                      placeholder="Enter Applied For"
-                    />
+                    <label>Applied For</label>
+                    <input type="text" id="appliedFor" name="appliedFor" placeholder="Enter Applied For" />
                   </div>
                   <div class="form-field">
-                    <label
-                      >Current Salary<span class="required">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      id="currentSalary"
-                      placeholder="Enter Current Salary"
-                    />
+                    <label>Current Salary<span class="required">*</span></label>
+                    <input type="text" id="currentSalary" name="currentSalary" placeholder="Enter Current Salary" />
                   </div>
                   <div class="form-field">
-                    <label
-                      >Expected Salary<span class="required">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      id="expectedSalary"
-                      placeholder="Enter Expected Salary"
-                    />
+                    <label>Expected Salary<span class="required">*</span></label>
+                    <input type="text" id="expectedSalary" name="expectedSalary" placeholder="Enter Expected Salary" />
                   </div>
                   <div class="form-field">
                     <label>Extra-Curricular</label>
-                    <input
-                      type="text"
-                      id="extraCurricular"
-                      placeholder="Extra-Curricular & Co-Curricular Activities"
-                    />
+                    <input type="text" id="extraCurricular" name="extraCurricular" placeholder="Extra-Curricular & Co-Curricular Activities" />
                   </div>
                 </div>
               </div>
             </div>
 
+            <!-- Resume Upload -->
             <div class="form-group-container">
               <div class="section-header">Resume Upload</div>
               <div class="form-content resume-section">
                 <div class="file-upload-container">
-                  <input
-                    type="file"
-                    id="resumeUpload"
-                    accept=".pdf"
-                    onchange="handleFileUpload(this)"
-                  />
+                  <input type="file" id="resumeUpload" name="resumeUpload" accept=".pdf" onchange="handleFileUpload(this)" />
                   <label for="resumeUpload" class="upload-container">
                     <div class="upload-icon">📄</div>
-                    <span class="upload-text" id="uploadText"
-                      >Upload RESUME</span
-                    >
+                    <span class="upload-text" id="uploadText">Upload RESUME</span>
                   </label>
                 </div>
-                <p class="upload-note">
-                  *Upload Resume - Maximum File Size is 5MB (Only PDF)
-                </p>
-                <p
-                  id="fileError"
-                  class="error-message"
-                  style="display: none"
-                ></p>
+                <p class="upload-note">*Upload Resume - Maximum File Size is 5MB (Only PDF)</p>
+                <p id="fileError" class="error-message" style="display: none"></p>
               </div>
             </div>
 
+            <!-- Declaration -->
             <div class="form-group-container">
               <div class="section-header">Declaration</div>
               <div class="form-content confirmation-section">
                 <label class="checkbox-label">
-                  <input type="checkbox" id="declaration" required />
+                  <input type="checkbox" id="declaration" name="declaration" required />
                   <span class="checkmark"></span>
-                  I confirm that the information provided here is true to my
-                  knowledge
+                  I confirm that the information provided here is true to my knowledge
                 </label>
               </div>
             </div>
 
+            <!-- Submit Button -->
             <div class="submit-section">
-              <button type="submit" class="submit-btn">
-                ✓ SUBMIT APPLICATION
-              </button>
+              <button type="submit" class="submit-btn">✓ SUBMIT APPLICATION</button>
             </div>
           </form>
         </div>
       </div>
     </div>
 
+    <a href="export_degree.php" class="btn btn-success">📥 Download Excel</a>
+
     <script src="script.js"></script>
+    <script>
+      // Function to export data to Excel
+      function exportToExcel() {
+        // Create a form and submit it to trigger the export
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = 'export_degree.php';
+        
+        // Add CSRF token if needed
+        const csrfToken = document.createElement('input');
+        csrfToken.type = 'hidden';
+        csrfToken.name = 'csrf_token';
+        csrfToken.value = '<?php echo $_SESSION["csrf_token"] ?? ""; ?>';
+        form.appendChild(csrfToken);
+        
+        document.body.appendChild(form);
+        form.submit();
+        document.body.removeChild(form);
+      }
+      
+      // Calculate age from DOB
+      document.getElementById('dob').addEventListener('change', function() {
+        const dob = new Date(this.value);
+        const ageDiff = Date.now() - dob.getTime();
+        const ageDate = new Date(ageDiff);
+        const calculatedAge = Math.abs(ageDate.getUTCFullYear() - 1970);
+        document.getElementById('age').value = calculatedAge;
+      });
+      
+      // Toggle button functions
+      function selectGender(value) {
+        document.getElementById('gender').value = value;
+        document.querySelectorAll('.button-group button').forEach(btn => {
+          btn.classList.remove('active');
+        });
+        event.target.classList.add('active');
+      }
+      
+      function selectMaritalStatus(value) {
+        document.getElementById('maritalStatus').value = value;
+        document.querySelectorAll('.button-group button').forEach(btn => {
+          btn.classList.remove('active');
+        });
+        event.target.classList.add('active');
+      }
+      
+      function toggleExam(type, value) {
+        document.getElementById(`${type}Status`).value = value;
+        document.querySelectorAll('.button-group button').forEach(btn => {
+          btn.classList.remove('active');
+        });
+        event.target.classList.add('active');
+      }
+      
+      // Dynamic field functions
+      function addQualification() {
+        const container = document.getElementById('qualificationsContainer');
+        const index = container.children.length;
+        const newQual = document.createElement('div');
+        newQual.className = 'qualification-item';
+        newQual.dataset.index = index;
+        newQual.innerHTML = `
+          <div class="form-row">
+            <div class="form-field">
+              <label>Degree<span class="required">*</span></label>
+              <select class="degree-select" name="degree[]" required>
+                <option value="">Select degree</option>
+                <option value="phd">Ph.D</option>
+                <option value="masters">Master's</option>
+                <option value="bachelors">Bachelor's</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label>Degree Name</label>
+              <input type="text" class="degree-name" name="degree_name[]" placeholder="Enter degree name">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-field">
+              <label>Education Mode<span class="required">*</span></label>
+              <select class="education-mode" name="education_mode[]" required>
+                <option value="">Select mode</option>
+                <option value="regular">Regular</option>
+                <option value="distance">Distance</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label>University Name<span class="required">*</span></label>
+              <input type="text" class="university-name" name="university_name[]" placeholder="Enter university name" required>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-field">
+              <label>Specialization</label>
+              <input type="text" class="specialization" name="specialization[]" placeholder="Enter specialization">
+            </div>
+            <div class="form-field">
+              <label>Year of Passing<span class="required">*</span></label>
+              <input type="date" class="year-passing" name="year_of_passing[]" required>
+            </div>
+            <div class="form-field">
+              <label>Percentage</label>
+              <input type="number" step="0.01" class="percentage" name="percentage[]" placeholder="Enter Percentage">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-field">
+              <label>CGPA</label>
+              <input type="number" step="0.1" class="cgpa" name="cgpa[]" placeholder="Enter CGPA">
+            </div>
+            <div class="form-field remove-btn-container">
+              <button type="button" class="remove-qualification-btn" onclick="removeQualification(${index})">✕ Remove</button>
+            </div>
+          </div>
+        `;
+        container.appendChild(newQual);
+      }
+      
+      function removeQualification(index) {
+        const item = document.querySelector(`.qualification-item[data-index="${index}"]`);
+        if (item) item.remove();
+        // Reindex remaining items
+        const items = document.querySelectorAll('.qualification-item');
+        items.forEach((item, i) => {
+          item.dataset.index = i;
+          const btn = item.querySelector('.remove-qualification-btn');
+          if (btn) btn.onclick = () => removeQualification(i);
+        });
+      }
+      
+      function addExperience() {
+        const container = document.getElementById('experienceContainer');
+        const index = container.children.length;
+        const newExp = document.createElement('div');
+        newExp.className = 'experience-item';
+        newExp.dataset.index = index;
+        newExp.innerHTML = `
+          <div class="form-row">
+            <div class="form-field">
+              <label>Organization / University<span class="required">*</span></label>
+              <input type="text" class="experience-organization" name="organization[]" required>
+            </div>
+            <div class="form-field">
+              <label>Designation/Post held<span class="required">*</span></label>
+              <input type="text" class="experience-designation" name="designation[]" required>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-field">
+              <label>From Date<span class="required">*</span></label>
+              <input type="date" class="experience-from" name="from_date[]" required>
+            </div>
+            <div class="form-field">
+              <label>To Date</label>
+              <input type="date" class="experience-to" name="to_date[]">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-field">
+              <label>Salary</label>
+              <input type="number" class="experience-salary" name="salary[]">
+            </div>
+            <div class="form-field checkbox-field">
+              <input type="checkbox" class="experience-current-role" name="currently_working[]">
+              <label>Currently working</label>
+            </div>
+            <div class="form-field remove-btn-container">
+              <button type="button" class="remove-experience-btn" onclick="removeExperience(this)">✕ Remove</button>
+            </div>
+          </div>
+        `;
+        container.appendChild(newExp);
+      }
+      
+      function removeExperience(button) {
+        const item = button.closest('.experience-item');
+        if (item) item.remove();
+      }
+      
+      function addResearchPaper() {
+        const container = document.getElementById('researchPapersContainer');
+        const index = container.children.length;
+        const newPaper = document.createElement('div');
+        newPaper.className = 'research-paper-item';
+        newPaper.dataset.index = index;
+        newPaper.innerHTML = `
+          <div class="form-row">
+            <div class="form-field">
+              <label>Title Of The Paper</label>
+              <input type="text" class="paper-title" name="paper_title[]">
+            </div>
+            <div class="form-field">
+              <label>Name of Journal</label>
+              <input type="text" class="journal-name" name="journal_name[]">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-field">
+              <label>Year of Publication</label>
+              <input type="date" class="publication-year" name="year_of_publication[]">
+            </div>
+            <div class="form-field remove-btn-container">
+              <button type="button" class="remove-research-paper-btn" onclick="removeResearchPaper(${index})">✕ Remove</button>
+            </div>
+          </div>
+        `;
+        container.appendChild(newPaper);
+      }
+
+      function removeResearchPaper(index) {
+        const item = document.querySelector(`.research-paper-item[data-index="${index}"]`);
+        if (item) item.remove();
+        // Reindex remaining items
+        const items = document.querySelectorAll('.research-paper-item');
+        items.forEach((item, i) => {
+          item.dataset.index = i;
+          const btn = item.querySelector('.remove-research-paper-btn');
+          if (btn) btn.onclick = () => removeResearchPaper(i);
+        });
+      }
+      
+      // File upload handling
+      function handleFileUpload(input) {
+        const file = input.files[0];
+        const errorElement = document.getElementById('fileError');
+        
+        if (file) {
+          if (file.size > 5 * 1024 * 1024) { // 5MB limit
+            errorElement.textContent = 'File size exceeds 5MB limit';
+            errorElement.style.display = 'block';
+            input.value = '';
+          } else if (file.type !== 'application/pdf') {
+            errorElement.textContent = 'Only PDF files are allowed';
+            errorElement.style.display = 'block';
+            input.value = '';
+          } else {
+            errorElement.style.display = 'none';
+            document.getElementById('uploadText').textContent = file.name;
+          }
+        }
+      }
+      
+      // Initialize form with one qualification and one experience by default
+      document.addEventListener('DOMContentLoaded', function() {
+        // Add event listeners for dynamic fields
+        document.querySelector('.add-qualification-btn').addEventListener('click', addQualification);
+        document.querySelector('.add-experience-btn').addEventListener('click', addExperience);
+        document.querySelector('.add-research-paper-btn').addEventListener('click', addResearchPaper);
+        
+        // Show remove button for the first qualification if it exists
+        const firstQualRemoveBtn = document.querySelector('.remove-qualification-btn');
+        if (firstQualRemoveBtn) {
+          firstQualRemoveBtn.style.display = 'block';
+        }
+      });
+    </script>
   </body>
 </html>

@@ -43,28 +43,28 @@ $pincode              = $_POST['pincode'];
 $mobile               = $_POST['mobile'];
 $alternate_mobile     = $_POST['alternate_mobile'];
 $institute_applied_to = $_POST['institute_applied_to'];
-// $current_salary       = $_POST['current_salary'];
-// $expected_salary      = $_POST['expected_salary'];
-// $extra_curricular     = $_POST['extra_curricular'];
-// $reference_name       = $_POST['reference_name'];
-// $reference_applied_for= $_POST['reference_applied_for'];
+$current_salary       = $_POST['current_salary'];
+$expected_salary      = $_POST['expected_salary'];
+$extra_curricular     = $_POST['extra_curricular'];
+$reference_name       = $_POST['reference_name'];
+$reference_applied_for= $_POST['reference_applied_for'];
 
 // Insert main application
 $stmt = $conn->prepare("INSERT INTO applications (
     post_applied_for, first_name, middle_name, last_name, dob, gender, marital_status,
     email, alternate_email, caste, aadhar, pan, state, city, address, pincode,
-    mobile, alternate_mobile, institute_applied_to 
-     , resume_filename,
+    mobile, alternate_mobile, institute_applied_to, current_salary, expected_salary,
+    extra_curricular, reference_name, reference_applied_for, resume_filename,
     phd_status, phd_university, phd_year, bed_university, bed_year,
     college_name, class_name, subject_name, years_experience, courses_from_date, courses_to_date,
     department_type, contract_type, last_salary, approved_by_university, letter_number, letter_date
-) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-$stmt->bind_param("sssssssssssssssssssssssssssssssssssss",
+$stmt->bind_param("ssssssssssssssssssssssssssssssssssssssssss",
     $post_applied_for, $first_name, $middle_name, $last_name, $dob, $gender, $marital_status,
     $email, $alternate_email, $caste, $aadhar, $pan, $state, $city, $address, $pincode,
-    $mobile, $alternate_mobile, $institute_applied_to, 
-    $resume_filename,
+    $mobile, $alternate_mobile, $institute_applied_to, $current_salary, $expected_salary,
+    $extra_curricular, $reference_name, $reference_applied_for, $resume_filename,
     $_POST['phd_status'], $_POST['phd_university'], $_POST['phd_year'],
     $_POST['bed_university'], $_POST['bed_year'],
     $_POST['college_name'], $_POST['class_name'], $_POST['subject_name'], $_POST['years_experience'],
@@ -94,86 +94,6 @@ foreach ($_POST['degree'] as $i => $val) {
     $stmt->execute();
     $stmt->close();
 }
-
-// === Additional Information  ===
-// === Additional Information ===
-if (isset($_POST['reference_name'])) {
-    try {
-        // Debug output
-        echo "<pre>ADDITIONAL INFO POST DATA:\n";
-        print_r([
-            'reference_name' => $_POST['reference_name'],
-            'reference_applied_for' => $_POST['reference_applied_for'] ?? 'NOT SET',
-            'current_salary' => $_POST['current_salary'] ?? 'NOT SET',
-            'expected_salary' => $_POST['expected_salary'] ?? 'NOT SET',
-            'extra_curricular' => $_POST['extra_curricular'] ?? 'NOT SET'
-        ]);
-        echo "</pre>";
-
-        $stmt = $conn->prepare("INSERT INTO additional_information (
-            application_id, reference_name, reference_applied_for, 
-            current_salary, expected_salary, extra_curricular, created_at
-        ) VALUES (?, ?, ?, ?, ?, ?, NOW())");
-        
-        if (!$stmt) {
-            throw new Exception("Prepare failed: " . $conn->error);
-        }
-
-        // Handle both single value and array cases
-        if (is_array($_POST['reference_name'])) {
-            foreach ($_POST['reference_name'] as $i => $val) {
-                // Create variables that can be passed by reference
-                $ref_name = $_POST['reference_name'][$i] ?? null;
-                $ref_applied = $_POST['reference_applied_for'][$i] ?? null;
-                $current_sal = $_POST['current_salary'][$i] ?? null;
-                $expected_sal = $_POST['expected_salary'][$i] ?? null;
-                $extra_curr = $_POST['extra_curricular'][$i] ?? null;
-                
-                $stmt->bind_param("isssss",
-                    $application_id,
-                    $ref_name,
-                    $ref_applied,
-                    $current_sal,
-                    $expected_sal,
-                    $extra_curr
-                );
-                
-                if (!$stmt->execute()) {
-                    throw new Exception("Execute failed: " . $stmt->error);
-                }
-            }
-        } else {
-            // Create variables for single value case
-            $ref_name = $_POST['reference_name'];
-            $ref_applied = $_POST['reference_applied_for'] ?? null;
-            $current_sal = $_POST['current_salary'] ?? null;
-            $expected_sal = $_POST['expected_salary'] ?? null;
-            $extra_curr = $_POST['extra_curricular'] ?? null;
-            
-            $stmt->bind_param("isssss",
-                $application_id,
-                $ref_name,
-                $ref_applied,
-                $current_sal,
-                $expected_sal,
-                $extra_curr
-            );
-            
-            if (!$stmt->execute()) {
-                throw new Exception("Execute failed: " . $stmt->error);
-            }
-        }
-        
-        $stmt->close();
-        echo "<p style='color:green'>Additional info inserted successfully</p>";
-    } catch (Exception $e) {
-        echo "<p style='color:red'>Error: " . htmlspecialchars($e->getMessage()) . "</p>";
-        error_log("Additional Info Error: " . $e->getMessage());
-    }
-} else {
-    echo "<p style='color:orange'>No reference information submitted</p>";
-}
-
 
 // === Work Experience ===
 foreach ($_POST['experience_organization'] as $i => $val) {
@@ -258,6 +178,9 @@ if (!$stmt->execute()) {
     error_log("Courses Taught error: " . $stmt->error);
 }
 $stmt->close();
+
+$conn->close();
+echo "✅ Application submitted successfully.";
 
 
 // Insert B.Ed details
