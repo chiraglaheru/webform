@@ -209,7 +209,7 @@
             
             <div class="download-section">
                 <div class="download-header">
-                    Download Applications Data
+                    Download Non-Teaching Applications Data
                 </div>
                 <div class="download-content">
                     <p style="margin-bottom: 30px; color: #64748b; font-size: 16px;">
@@ -218,12 +218,61 @@
                     
                 
                     
-                    <button class="download-btn" onclick="downloadApplications('excel')">
+                    <!-- <button class="download-btn" id="download-excel"> -->
+                        <button class="download-btn" id="download-non-excel" onclick="handleExcelDownload()"></button>
                         <span class="download-icon">📈</span>
                         Download as Excel
                     </button>
                     
-                    <button class="download-btn" onclick="downloadApplications('pdf')">
+                    <button class="download-btn" id="download-pdf">
+                        <span class="download-icon">📄</span>
+                        Download as PDF
+                    </button>
+                </div>
+            </div>
+
+            <!-- junior -->
+             <div class="download-section">
+                <div class="download-header">
+                    Download Junior Applications Data
+                </div>
+                <div class="download-content">
+                    <p style="margin-bottom: 30px; color: #64748b; font-size: 16px;">
+                        Export application data in various formats for analysis and record keeping.
+                    </p>
+                    
+                
+                    
+                    <button class="download-btn" id="download-junior-excel">
+                        <span class="download-icon">📈</span>
+                        Download as Excel
+                    </button>
+                    
+                    <button class="download-btn" id="download-junior-pdf">
+                        <span class="download-icon">📄</span>
+                        Download as PDF
+                    </button>
+                </div>
+            </div>
+
+            <!-- degree -->
+             <div class="download-section">
+                <div class="download-header">
+                    Download Degree Applications Data
+                </div>
+                <div class="download-content">
+                    <p style="margin-bottom: 30px; color: #64748b; font-size: 16px;">
+                        Export application data in various formats for analysis and record keeping.
+                    </p>
+                    
+                
+                    
+                    <button class="download-btn" id="download-degree-excel">
+                        <span class="download-icon">📈</span>
+                        Download as Excel
+                    </button>
+                    
+                    <button class="download-btn" id="download-degree-pdf">
                         <span class="download-icon">📄</span>
                         Download as PDF
                     </button>
@@ -235,5 +284,6 @@
     </div>
     
     <script src="admin-dashboard.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jwt-decode/build/jwt-decode.min.js"></script>
 </body>
 </html>
