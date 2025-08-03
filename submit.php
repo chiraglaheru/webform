@@ -177,10 +177,8 @@ $stmt->bind_param("isssissssssss",
 if (!$stmt->execute()) {
     error_log("Courses Taught error: " . $stmt->error);
 }
-$stmt->close();
 
-$conn->close();
-echo "✅ Application submitted successfully.";
+
 
 
 // Insert B.Ed details
@@ -211,6 +209,7 @@ $stmt->bind_param("issss",
     $_POST['award_salary']
 );
 $stmt->execute();
+
 $stmt->close();
 
 $conn->close();
